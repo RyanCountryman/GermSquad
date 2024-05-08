@@ -1,0 +1,76 @@
+.App {
+  min-height: 100vh;
+  background-color: #414b61;
+  align-items: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 3vh;
+  display: flex;
+  align-items: center;
+  padding: 0 8vw;
+  justify-content: space-between;
+  text-shadow: 0 0 15px rgb(39, 104, 38);
+  color: rgb(235, 235, 235);
+}
+
+.App-header h1 {
+  margin-right: 10px
+}
+
+.logo {
+  max-width: 40vw;
+  height: auto;
+}
+
+.App-header p {
+  margin-left: 2vw;
+}
+
+.App-main {
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: rgb(215, 225, 240);
+  border: 2px solid #ce6868;
+}
+
+.App-nav {
+  background-color: #ce6868;
+}
+
+.App-nav a{
+  padding: 0px 20px 5px 20px;
+  font-weight: bolder;
+  font-size: large;
+  align-items: center;
+
+}
+@media (max-width:768px) {
+  .App-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logo {
+    width: 80vw;
+  }
+
+  .App-nav{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .App-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
+.App-link {
+  color: #61dafb;
+}
