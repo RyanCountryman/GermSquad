@@ -1,3 +1,4 @@
+
 .App {
   min-height: 100vh;
   background-color: #414b61;
@@ -34,19 +35,25 @@
   flex-direction: column;
   align-items: center;
   font-size: calc(10px + 2vmin);
-  color: rgb(215, 225, 240);
-  border: 2px solid #ce6868;
+  color: rgb(246, 246, 246);
+  border: 2px solid #155b37;
 }
 
 .App-nav {
-  background-color: #ce6868;
+  background-color: #155b37;
+  display: flex;
 }
 
 .App-nav a{
   padding: 0px 20px 5px 20px;
   font-weight: bolder;
-  font-size: large;
+  font-size:x-large;
   align-items: center;
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+}
+.App-nav a:hover {
+color: #282c34;
 
 }
 @media (max-width:768px) {
@@ -74,3 +81,76 @@
 .App-link {
   color: #61dafb;
 }
+
+h1, h2, h3, h4, h5 {
+  text-align: center;
+  padding: 1rem;
+}
+
+button{
+  padding: 0.5em;
+}
+
+footer{
+  font-size: 2em;
+  text-align: center;
+}
+
+fieldset {
+  margin: 0 auto;
+  width: fit-content;
+  padding: 1rem 2rem 2rem 2rem; 
+}
+
+legend {
+  text-align: center;
+}
+
+/* 
+Table Design
+5/14/2024
+Borrowed design elements from:
+https://devdevout.com/css/css-tables
+Author: Zach Saffrin
+*/
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.plantTable {
+  background: #155b37;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 0.25em;
+  text-align: center;
+  
+}
+.plantTable th {
+  color: #E2B842;
+  font-size: 0.5em;
+  font-weight: 250;
+  padding: 0.05em 0.1em;
+  text-align: left;
+}
+.plantTable td {
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 250;
+  padding: 0.1em 0.2em;
+  border: 1px solid black;
+}
+.disabled td {
+  color: #4F5F64;
+}
+.plantTable tbody tr {
+  transition: background 0.25s ease;
+}
+.plantTable tbody tr:hover {
+  background: #53727f;
+}
+

@@ -1,8 +1,13 @@
 import React from 'react';
+import Table from '../components/Tables';
 
-function HomePage() {
-    return (
-        <h1>Welcome to the HomePage</h1>
+
+
+
+const HomePage = () => {
+    return(
+    <h2>Home Page</h2>
     )
-}
+};
+
 export default HomePage;
