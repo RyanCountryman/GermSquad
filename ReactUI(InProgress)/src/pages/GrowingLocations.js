@@ -1,50 +1,34 @@
 import React from 'react';
+import Table from '../components/Tables';
+import Buttons from '../components/Buttons';
 
 function GrowingLocations() {
+    const customClass = "plantTable"
+    const theadData = ["Location ID", "In Ground?", "In Container?", "Bed Type", "Container Type", "Modify"];
+
+    const tbodyData = [
+        {
+            id: "1",
+            items: ["1", "Yes", "No", "Trellised Raised Bed", "NA", Buttons()],    
+        },
+        {
+            id: "2",
+            items: ["2", "No", "Yes", "NA", "5 Gallon Ceramic Pot", Buttons()],
+        },
+        {
+            id: "3",
+            items: ["3", "Yes", "No", "Garden Row", "NA", Buttons()],
+        },
+    ];
     return (
         <body>
             <header>
                 <h1>Growing Locations Page</h1>
             </header>
             <main id="GrowingLoc">
-                <section>
-                    <table id="planttable">
-                        <tr>
-                            <th>Location ID</th>
-                            <th>In Ground?</th>
-                            <th>In Container?</th>
-                            <th>Bed Type</th>
-                            <th>Container Type</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Yes</td>
-                            <td>No</td>
-                            <td>Trellised Raised Bed</td>
-                            <td>NA</td>
-                            <button class= "btn btn-edit">Edit</button>
-                            <button class= "btn btn-delete">Delete</button>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>No</td>
-                            <td>Yes</td>
-                            <td>NA</td>
-                            <td>5 Gallon Ceramic Pot</td>
-                            <button class= "btn btn-edit">Edit</button>
-                            <button class= "btn btn-delete">Delete</button>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Yes</td>
-                            <td>No</td>
-                            <td>Garden Row</td>
-                            <td>NA</td>
-                            <button class= "btn btn-edit">Edit</button>
-                            <button class= "btn btn-delete">Delete</button>
-                        </tr>
-                    </table>
-                </section>
+                <div>
+                    <Table theadData={theadData} tbodyData={tbodyData} customClass={customClass} />
+                </div>
                 <section >
                     <h2>Create New Growing Location</h2>
                     <article>

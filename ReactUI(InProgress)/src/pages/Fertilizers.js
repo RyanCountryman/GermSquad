@@ -1,50 +1,36 @@
 import React from 'react';
+import Table from '../components/Tables';
+import Buttons from '../components/Buttons';
 
 function Fertilizers() {
+    const customClass = "plantTable"
+    const theadData = ["Fertilizer ID", "Fertilizer Type", "Nitrogen", "Phosphorous", "Potassium", "Modify"];
+
+    const tbodyData = [
+        {
+            id: "1",
+            items: ["1", "Liquid Big Bloom", "0", "0.5", "0.7", Buttons()],
+            
+            
+        },
+        {
+            id: "2",
+            items: ["2", "Liquid Grow Big", "6", "4", "4", Buttons()],
+        },
+        {
+            id: "3",
+            items: ["3", "Liquid Tiger Bloom", "2", "8", "4", Buttons()],
+        },
+    ];
     return (
         <body>
         <header>
             <h1>Fertilizer Page</h1>
         </header>
         <main id="Fertilizers">
-            <section>
-                <table id="planttable">
-                    <tr>
-                        <th>Fertilizer ID</th>
-                        <th>Fertilizer Type</th>
-                        <th>Nitrogen</th>
-                        <th>Phosphorous</th>
-                        <th>Potassium</th>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Liquid Big Bloom</td>
-                        <td>0</td>
-                        <td>0.5</td>
-                        <td>0.7</td>
-                        <button class= "btn btn-edit">Edit</button>
-                        <button class= "btn btn-delete">Delete</button>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Liquid Grow Big</td>
-                        <td>6</td>
-                        <td>4</td>
-                        <td>4</td>
-                        <button class= "btn btn-edit">Edit</button>
-                        <button class= "btn btn-delete">Delete</button>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Liquid Tiger Bloom</td>
-                        <td>2</td>
-                        <td>8</td>
-                        <td>4</td>
-                        <button class= "btn btn-edit">Edit</button>
-                        <button class= "btn btn-delete">Delete</button>
-                    </tr>
-                </table>
-            </section>
+            <div>
+                <Table theadData={theadData} tbodyData={tbodyData} customClass={customClass} />
+            </div>
             <section >
                 <h2>Create New Fertilizer</h2>
                 <article>

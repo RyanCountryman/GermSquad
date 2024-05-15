@@ -2,13 +2,13 @@ import './App.css';
 import logo from './homeImage340.png';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import PlantTable from './pages/HomePage';
 import Plants from './pages/Plants';
 import Seedlings from './pages/Seedlings';
 import Growths from './pages/Growths';
 import Productions from './pages/Productions';
 import Fertilizers from './pages/Fertilizers';
 import GrowingLocations from './pages/GrowingLocations';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         <Router>
           <Navigation />
           <Routes>
-            <Route path='/' element={<PlantTable />}></Route>
+            <Route path='/' element={<HomePage />}></Route>
             <Route path='/Plants' element={<Plants />}></Route>
             <Route path='/Seedlings' element={<Seedlings />}></Route>
             <Route path='/Growths' element={<Growths />}></Route>

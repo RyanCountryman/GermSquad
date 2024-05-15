@@ -81,8 +81,16 @@ color: #282c34;
   color: #61dafb;
 }
 
+h1, h2 {
+  text-align: center;
+  padding: 1rem;
+}
 /* 
-Table Design 
+Table Design
+5/14/2024
+Borrowed design elements from:
+https://devdevout.com/css/css-tables
+Author: Zach Saffrin
 */
 
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
@@ -99,9 +107,9 @@ Table Design
   border-collapse: collapse;
   margin: 1em;
   text-align: center;
+  
 }
 .plantTable th {
-  border-bottom: 1px solid #364043;
   color: #E2B842;
   font-size: 0.85em;
   font-weight: 600;
@@ -112,6 +120,7 @@ Table Design
   color: #fff;
   font-weight: 400;
   padding: 0.65em 1em;
+  border: 1px solid black;
 }
 .disabled td {
   color: #4F5F64;

@@ -1,57 +1,37 @@
 import React from 'react';
+import Table from '../components/Tables';
+import Buttons from '../components/Buttons';
+
 
 function Seedlings() {
+    const customClass = "plantTable"
+    const theadData = ["Seedling ID", "Plant ID", "Plant Name", "Date Planted", "Soil Temperature", "Water Frequency", "Days to germinate", "Modify"];
+
+    const tbodyData = [
+        {
+            id: "1",
+            items: ["1", "1", "Tomato", "05/01/2024", "70F", "Every 2 Days", "10", Buttons()],
+            
+            
+        },
+        {
+            id: "2",
+            items: ["2", "2", "Pepper", "04/01/2024", "80F", "Every 3 Days", "6", Buttons()],
+        },
+        {
+            id: "3",
+            items: ["3", "3", "Cucumber", "04/10/2024", "65F", "Every 1 Days", "3", Buttons()],
+        },
+    ];
     return (
         <body>
             <header>
                 <h1>Seedlings Page</h1>
             </header>
             <main id="Seedlings">
-                <section>
-                    <table id="planttable">
-                        <tr>
-                            <th>Seedling ID</th>
-                            <th>Plant ID</th>
-                            <th>Plant Name</th>
-                            <th>Date Planted</th>
-                            <th>Soil Temperature</th>
-                            <th>Water Frequency</th>
-                            <th>Days to germinate</th>
-
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>Tomato</td>
-                            <td>05/01/2024</td>
-                            <td>70F</td>
-                            <td>Every 2 Days</td>
-                            <td>10</td>
-                            <button class= "btn btn-edit">Edit</button>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>Pepper</td>
-                            <td>04/01/2024</td>
-                            <td>80F</td>
-                            <td>Every 3 Days</td>
-                            <td>6</td>
-                            <button class= "btn btn-edit">Edit</button>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>Cucumber</td>
-                            <td>04/10/2024</td>
-                            <td>65F</td>
-                            <td>Every 1 Days</td>
-                            <td>3</td>
-                            <button class= "btn btn-edit">Edit</button>
-                        </tr>
-
-                    </table>
-                </section>
+                <div>
+                    <Table theadData={theadData} tbodyData={tbodyData} customClass={customClass} />
+                </div>
                 <section >
                     <h2>Create New Entry</h2>
                     <article>
