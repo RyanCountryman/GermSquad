@@ -38,7 +38,7 @@ function LocationDetails() {
                 <article>
                     <form action="/LocationDetails" method="POST">
                         <fieldset>
-                            <legend> LocationDetails</legend>
+                            <legend>New Location Details</legend>
                             <p>
                                 <label for="LocationDetails">LocationID  </label>
                                 <select name = "GrowingLocationID" id="locationID">

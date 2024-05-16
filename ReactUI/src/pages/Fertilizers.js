@@ -36,7 +36,7 @@ function Fertilizers() {
                 <article>
                     <form action="/Fertilizers" method="POST">
                         <fieldset>
-                            <legend>Fertilizer </legend>
+                            <legend>New Fertilizer</legend>
                             <p>
                                 <label for="Fertilizer">Fertilizer Type </label>
                                 <input type= "text"/>

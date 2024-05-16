@@ -4,22 +4,22 @@ import Buttons from '../components/Buttons';
 
 function Productions() {
     const customClass = "plantTable"
-    const theadData = ["Production ID", "Plant ID", "Plant Name", "Start Date", "End Production Date", "Water Frequency", "Fertilizer Frequency", "Total Yield", "Modify"];
+    const theadData = ["Production ID", "Plant ID", "Plant Name", "Start Date", "End Production Date", "Water Frequency", "Fertilizer Frequency", "Total Yield","Fertilizer","Location", "Modify"];
 
     const tbodyData = [
         {
             id: "1",
-            items: ["1", "1", "Tomato", "06/15/2024", "09/15/2024", "Every 1 Days", "Every 5 Days", "10 Pounds", Buttons()],
+            items: ["1", "1", "Tomato", "06/15/2024", "09/15/2024", "Every 1 Days", "Every 5 Days", "10 Pounds","Liquid Grow Big","Ceramic 3 Gal", Buttons()],
             
             
         },
         {
             id: "2",
-            items: ["2", "2", "Pepper", "07/15/2024", "NA", "Every 2 Days", "Every 7 Days", "NA", Buttons()],
+            items: ["2", "2", "Pepper", "07/15/2024", "NA", "Every 2 Days", "Every 7 Days", "NA","Liquid Tiger's Blood","Ceramic 5 Gal", Buttons()],
         },
         {
             id: "3",
-            items: ["3", "3", "Cucumber", "05/15/2024", "10/15/2024", "Every 1 Days", "Every 7 Days", "20 Pounds", Buttons()],
+            items: ["3", "3", "Cucumber", "05/15/2024", "10/15/2024", "Every 1 Days", "Every 7 Days", "20 Pounds","Liquid Big Bloom","Raised Bed", Buttons()],
         }
     ];
     return (
@@ -37,7 +37,7 @@ function Productions() {
                         <h5>Which plant is this?</h5>
                         <form action="/Productions" method="POST">
                             <fieldset>
-                                <legend>Production</legend>
+                                <legend>New Production</legend>
                                 <p>
                                     <label for="Production">Plant Type </label>
                                     <select name = "plantType" id="plantType">

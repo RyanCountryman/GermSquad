@@ -34,7 +34,7 @@ function GrowingLocations() {
                     <article>
                         <form action="/GrowingLocations" method="POST">
                             <fieldset>
-                                <legend>Growing Location</legend>
+                                <legend>New Growing Location</legend>
                                 <p>
                                     <label for="location">Location Type </label>
                                     <select name = "locationType" id="locationType">

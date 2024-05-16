@@ -34,7 +34,7 @@ function FertilizerDetails() {
                 <article>
                     <form action="/FertilizerDetails" method="POST">
                         <fieldset>
-                            <legend> FertilizerDetails</legend>
+                            <legend>New Fertilizer Details</legend>
                             <p>
                                 <label for="FertilizerDetails">Fertilizer  </label>
                                 <select name = "fertilizerType" id="fertilizerType">
