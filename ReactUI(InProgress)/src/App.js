@@ -9,6 +9,8 @@ import Productions from './pages/Productions';
 import Fertilizers from './pages/Fertilizers';
 import GrowingLocations from './pages/GrowingLocations';
 import HomePage from './pages/HomePage';
+import FertilizerDetails from './pages/FertilizerDetails'
+import LocationDetails from './pages/LocationDetails'
 
 function App() {
   return (
@@ -29,9 +31,14 @@ function App() {
             <Route path='/Productions' element={<Productions />}></Route>
             <Route path='/Fertilizers' element={<Fertilizers />}></Route>
             <Route path='/GrowingLocations' element={<GrowingLocations />}></Route>
+            <Route path='/FertilizerDetails' element={<FertilizerDetails />}></Route>
+            <Route path='/LocationDetails' element={<LocationDetails />}></Route>
           </Routes>
         </Router>
       </div>
+      <footer>
+            <p>&copy; 2024 Germ Squad</p> 
+        </footer>
     </div>
   );
 }

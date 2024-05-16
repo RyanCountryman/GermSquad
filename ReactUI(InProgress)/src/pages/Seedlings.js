@@ -35,7 +35,7 @@ function Seedlings() {
                 <section >
                     <h2>Create New Entry</h2>
                     <article>
-                        <p>What are you planting?</p>
+                        <h3>What are you planting?</h3>
                         <form action="/Seedlings" method="POST">
                             <fieldset>
                                 <legend>New Plant</legend>

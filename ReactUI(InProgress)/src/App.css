@@ -41,6 +41,7 @@
 
 .App-nav {
   background-color: #155b37;
+  display: flex;
 }
 
 .App-nav a{
@@ -81,10 +82,30 @@ color: #282c34;
   color: #61dafb;
 }
 
-h1, h2 {
+h1, h2, h3, h4, h5 {
   text-align: center;
   padding: 1rem;
 }
+
+button{
+  padding: 0.5em;
+}
+
+footer{
+  font-size: 2em;
+  text-align: center;
+}
+
+fieldset {
+  margin: 0 auto;
+  width: fit-content;
+  padding: 1rem 2rem 2rem 2rem; 
+}
+
+legend {
+  text-align: center;
+}
+
 /* 
 Table Design
 5/14/2024
@@ -105,22 +126,21 @@ Author: Zach Saffrin
   background: #155b37;
   border-radius: 0.25em;
   border-collapse: collapse;
-  margin: 1em;
+  margin: 0.25em;
   text-align: center;
   
+  
 }
-.plantTable th {
-  color: #E2B842;
-  font-size: 0.85em;
-  font-weight: 600;
-  padding: 0.5em 1em;
-  text-align: left;
+.plantTable thead {
+  font-size: larger;
+  
 }
 .plantTable td {
   color: #fff;
-  font-weight: 400;
-  padding: 0.65em 1em;
+  font-size: 0.75em;
+  padding: 0.1em 0.2em;
   border: 1px solid black;
+  font-weight:500;
 }
 .disabled td {
   color: #4F5F64;
@@ -131,4 +151,33 @@ Author: Zach Saffrin
 .plantTable tbody tr:hover {
   background: #53727f;
 }
+
+/*
+Buttons
+*/
+button {
+	box-shadow: 3px 4px 0px 0px #899599;
+	background:linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
+	background-color:#ededed;
+	border-radius:15px;
+	border:1px solid #d6bcd6;
+	display:inline-block;
+	cursor:pointer;
+	color:#3a8a9e;
+	font-family:Arial;
+	font-size:17px;
+	padding:7px 25px;
+  margin: 5px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #e1e2ed;
+}
+button:hover {
+	background:linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);
+	background-color:#bab1ba;
+}
+button:active {
+	position:relative;
+	top:1px;
+}
+
 

@@ -34,7 +34,7 @@ function Growths() {
             <section >
                 <h2>Create New Entry</h2>
                 <article>
-                    <p>Which plant is this?</p>
+                    <h3>Which plant is this?</h3>
                     <form action="/Growths" method="POST">
                         <fieldset>
                             <legend>Growth</legend>

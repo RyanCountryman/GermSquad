@@ -11,6 +11,8 @@ function Navigation() {
             <Link to='/Productions'>Productions</Link>
             <Link to='/Fertilizers'>Fertilizers</Link>
             <Link to='/GrowingLocations'>GrowingLocations</Link>
+            <Link to='/FertilizerDetails'>FertilizerDetails</Link>
+            <Link to='/LocationDetails'>LocationDetails</Link>
         </nav>
     )
 }

@@ -34,7 +34,7 @@ function Productions() {
                 <section >
                     <h2>Create New Entry</h2>
                     <article>
-                        <p>Which plant is this?</p>
+                        <h3>Which plant is this?</h3>
                         <form action="/Productions" method="POST">
                             <fieldset>
                                 <legend>Production</legend>
