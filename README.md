@@ -1,2 +1,2 @@
-# GermSquad
-CS340
+# GermSquad 2024
+CS340 
