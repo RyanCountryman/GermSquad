@@ -14,7 +14,6 @@ SELECT
     Seedlings.datePlanted,
     Seedlings.aveTemperature,
     Seedlings.waterFrequency,
-    Seedlings.waterAmount,
     Seedlings.germinationTime
 FROM Seedlings
 LEFT JOIN Plants ON Seedlings.plantID = Plants.plantID;
@@ -22,12 +21,11 @@ LEFT JOIN Plants ON Seedlings.plantID = Plants.plantID;
 -- Displays Current entries on the Growths Page 
 SELECT 
 	Growths.growthID,
-	Plants.plantType,
     Growths.plantID,
+    Plants.plantType,
     Growths.startDate,
     Growths.dailySunlight,
     Growths.waterFrequency,
-    Growths.waterAmount,
     Growths.fertilizerFrequency,
     Fertilizers.fertilizerType
 FROM Growths
@@ -54,7 +52,8 @@ LEFT JOIN Plants ON Productions.plantID = Plants.plantID;
 -- Display Current entries while on GrowingLocations page
 SELECT * FROM GrowingLocations;
 
-
+-- Display FertilizerDetails
+SELECT * FROM FertilizerDetails;
 
 
 
@@ -74,7 +73,8 @@ SELECT bedType FROM GrowingLocations
 SELECT containerType FROM GrowingLocations
 	WHERE isGround = 0;
     
-
+-- Find specific entry by id for Puts
+Select * From Plants WHERE plantID = :plantID;
 
 
 
@@ -114,8 +114,7 @@ VALUES (:fertilizerTypeInput, :nitrogenInput, :phosphorousInput, :potassiumInput
 -- Update a Plants Entry
 UPDATE Plants SET
 	plantType = :plantTypeInput, 
-	seasonComplete = :seasonCompleteInput, 
-	waterSummation = :waterSummationInput
+	seasonComplete = :seasonCompleteInput
 WHERE plantID = :plantIDInput;
 
 -- Update a Seedlings Entry
