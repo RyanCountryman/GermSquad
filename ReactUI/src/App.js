@@ -1,3 +1,7 @@
+// 5/07/2024
+// Utilized create-react-app to provide the structure of the project :
+// https://create-react-app.dev
+
 import './App.css';
 import logo from './homeImage340.png';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
