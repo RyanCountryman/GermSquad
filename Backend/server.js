@@ -1,3 +1,7 @@
+// 5/18/2024
+// Server Structure obtained from react-starter-app :
+// https://github.com/osu-cs340-ecampus/react-starter-app
+
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql");
@@ -15,8 +19,6 @@ app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json());
 
 // API Routes for backend CRUD:
-// app.use("/api/people", require("./routes/peopleRoutes"));
-
 
 //Read full plants table TODO:CHECK STATUS CODES
 app.get('/Plants',(req,res) => {
@@ -26,6 +28,21 @@ app.get('/Plants',(req,res) => {
             res.status(500).send('Error fetching plant data');
             return;
         }
+        res.json(results);
+    })
+});
+
+//Obtain specific plant entry by ID
+app.get('/Plants/:plantID', (req,res) =>{
+    console.log(req.params.plantID);
+    const plantID = req.params.plantID;
+    db.query(`Select * From Plants WHERE plantID = ?`,[plantID], (error,results) =>{
+        if(error){
+            console.log(`Error obtaing plant with ID: ${plantID}`);
+            res.status(500).send('Unable to find plant')
+            return;
+        }
+        console.log(results);
         res.json(results);
     })
 });
@@ -48,11 +65,32 @@ app.post('/CreatePlant', (req,res) => {
     });
 });
 
+app.put('/EditPlant/:editPlantID', (req,res) =>{
+    //console.log(req.body);
+    
+    const plantID = req.params.editPlantID;
+    console.log(plantID);
+    let { plantType, plantName,seasonComplete } = req.body;
+    console.log(`plantType ${plantType}   plantName ${plantName}  seasonComplete${seasonComplete}`);
+    if(!plantType) plantType = plantName;
+    //if (!seasonComplete) seasonComplete = 0;
+    const query = `UPDATE Plants SET
+	                    plantType = coalesce(?,plantType), 
+	                    seasonComplete = coalesce(?,seasonComplete)
+                    WHERE plantID = ?`;
+    db.query(query, [plantType, seasonComplete, plantID], (error, results) =>{
+        if(error){
+            console.error("Issue updating plant entry");
+            res.status(500).send('Unable to update plant entry');
+            return;
+        }
+        res.status(201).send('Plant updated');
+    });
+});
+
 //Deletion of plant entry by plantID TODO: CHECK STATUS CODES
 app.delete('/DeletePlant/:plantID', (req,res) => {
     const plantID = req.params.plantID;
-    console.log("reqParams", req.params);
-    console.log("plantID", plantID);
     db.query('DELETE FROM Plants WHERE plantID = ?', [plantID], (error, results) =>{
         if(error){
             console.error(`Issue deleting plant entry with plantID ${plantID} `);

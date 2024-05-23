@@ -1,19 +1,20 @@
 
 .App {
   min-height: 100vh;
-  background-color: #414b61;
   align-items: center;
+  background: linear-gradient(to bottom,#006769, #40A578 100%);
+  
 }
 
 .App-header {
-  background-color: #282c34;
+  background: linear-gradient(to bottom,#006769, #40A578 100%);
   min-height: 3vh;
   display: flex;
   align-items: center;
   padding: 0 8vw;
   justify-content: space-between;
   text-shadow: 0 0 15px rgb(39, 104, 38);
-  color: rgb(235, 235, 235);
+  color: #9DDE8B;
 }
 
 .App-header h1 {
@@ -25,7 +26,7 @@
   height: auto;
 }
 
-.App-header p {
+.App-header h4 {
   margin-left: 2vw;
 }
 
@@ -35,65 +36,29 @@
   flex-direction: column;
   align-items: center;
   font-size: calc(10px + 2vmin);
-  color: rgb(246, 246, 246);
-  border: 2px solid #155b37;
+  color: #9DDE8B;
+  font-family: "Wix Madefor Display", sans-serif;
+  
+  
 }
-
-.App-nav {
-  background-color: #155b37;
-  display: flex;
-}
-
-.App-nav a{
-  padding: 0px 20px 5px 20px;
-  font-weight: bolder;
-  font-size:x-large;
-  align-items: center;
-  color: rgb(255, 255, 255);
-  text-decoration: none;
-}
-.App-nav a:hover {
-color: #282c34;
-
-}
-@media (max-width:768px) {
-  .App-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .logo {
-    width: 80vw;
-  }
-
-  .App-nav{
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .App-main {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 
 .App-link {
   color: #61dafb;
-}
+} 
 
 h1, h2, h3, h4, h5 {
   text-align: center;
   padding: 1rem;
+  font-family:"Poetsen One", sans-serif;
 }
 
-button{
-  padding: 0.5em;
-}
+
 
 footer{
   font-size: 2em;
   text-align: center;
+  background-color: E6FF94;
+  color: #26865b;
 }
 
 fieldset {
@@ -123,23 +88,31 @@ Author: Zach Saffrin
 }
 
 .plantTable {
-  background: #155b37;
+  background: linear-gradient(to bottom,#9DDE8B, #26865b 100%);
   border-radius: 0.25em;
   border-collapse: collapse;
   margin: 0.25em;
   text-align: center;
+    
 }
+
+table td + td {
+  border-left:1px solid #524C42; 
+}
+
 .plantTable thead {
   font-size: larger;
   
+  
 }
 .plantTable td {
-  color: #fff;
+  color: #092635;
   font-size: 0.75em;
-  padding: 0.1em 0.2em;
-  border: 1px solid black;
-  font-weight:500;
+  padding: 0.2em 0.3em;
+  font-weight:bold;
 }
+
+
 .disabled td {
   color: #4F5F64;
 }
@@ -150,21 +123,51 @@ Author: Zach Saffrin
   background: #53727f;
 }
 
+
+/*
+Forms
+*/
+form {
+  background: linear-gradient(to bottom,#9DDE8B, #26865b 100%);
+  border-radius: 20px;
+  box-sizing:border-box;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  color: #092635;
+  font-weight: bold;
+  
+}
+
+select, input {
+  background-color: #524C42;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: #40A578;
+  font-size: 18px;
+  height: 100%;
+  outline: 0;
+  padding: 4px 20px 0;
+  width: 100%;
+}
+fieldset {
+  border: none;
+}
+
 /*
 Buttons
 */
 button {
 	box-shadow: 3px 4px 0px 0px #899599;
-	background:linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
-	background-color:#ededed;
+	background:linear-gradient(to bottom, #ededed 5%, #E2DFD0 100%);
 	border-radius:15px;
 	border:1px solid #d6bcd6;
-	display:inline-block;
 	cursor:pointer;
-	color:#3a8a9e;
+	color:#082d36;
 	font-family:Arial;
-	font-size:17px;
-	padding:7px 25px;
+	max-width: 100%;
+	padding:10px;
   margin: 5px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #e1e2ed;
@@ -178,4 +181,39 @@ button:active {
 	top:1px;
 }
 
+@media screen and (max-width: 1366px) {
+  tr, td, p {
+    font-size: 30px;
+  }
+}
 
+@media screen and (max-width: 1272px) {
+  tr, td, p {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 880px) {
+  tr, td, p {
+    font-size: 13px;
+  }
+  .App-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logo {
+    width: 80vw;
+  }
+
+  .App-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  tr, td, p {
+    font-size: 10px;
+  }
+}

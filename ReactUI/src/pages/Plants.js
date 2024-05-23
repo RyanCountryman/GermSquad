@@ -1,39 +1,76 @@
 import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
-//import axios from 'axios';
+
 
 
 function Plants() {
     const [plants, setPlants] = useState([]);
+    const [edit, setEdit] = useState(false)
+    const [editPlantID, setEditPlantID] = useState(null);
+    const [plantType, setPlantType] = useState("");
+    const [plantName, setPlantName] = useState("");
+    const [seasonComplete, setSeasonComplete] = useState("0")
     
 
-    const addPlant = async (event) =>{
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
+    const addPlant = async (e) =>{
+        //e.preventDefault();
+        //const form = e.target;
+        //const formData = new FormData(form);
 
-        const plantType = formData.get('plantType');
-        const plantName = formData.get('plantName');
+        //const plantType = formData.get('plantType');
+        //const plantName = formData.get('plantName');
 
+        //Ensure no duplicate plantTypes are being submitted to backend
         if((plantType && plantName) || (!plantType && !plantName)){
-            alert('Please fill in either plantType from the dropdown or enter a new plant type');
+            alert('Please select a plantType from the drop down or enter a new plant');
             return;
         }
 
+        //Send formData to endpoint to create new plant
         const response = await fetch('http://localhost:8500/CreatePlant', {
             method: 'POST',
-            body: JSON.stringify(Object.fromEntries(formData)),
+            body: JSON.stringify({ plantType, plantName, seasonComplete}),
             headers: {'Content-Type': 'application/json'}
         });
 
         if(response.ok) {
             loadPlants();
-            form.reset();
+            resetForm();
         }else{
             console.error('Failed to create new plant entry');
         }
+    };
 
+    const editPlant = async (plantID) => {
+        const response = await fetch(`http://localhost:8500/Plants/${plantID}`);
+        if (response.ok) {
+            const plant = await response.json();
+            //setPlantType(plant.plantType);
+            setPlantName(plant.plantName);
+            setSeasonComplete(plant.seasonComplete);
+            setEdit(true);
+            setEditPlantID(plantID);
+        } else {
+            console.error(`Failed to fetch Plant with plantID = ${plantID}, status code = ${response.status}`);
+        }
+    };
+
+    const updatePlant = async () =>{
+        const response = await fetch(`http://localhost:8500/EditPlant/${editPlantID}`, {
+            method: 'PUT',
+            body: JSON.stringify({ plantType, plantName, seasonComplete }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+            loadPlants();
+            resetForm();
+            setEdit(false);
+            setEditPlantID(null);
+        } else {
+            console.error('Failed to update plant entry');
+        }
     };
 
     const deletePlant = async (plantID) =>{
@@ -45,7 +82,33 @@ function Plants() {
         }
     };
     
+    const loadPlants = async ()=>{
+        const response = await fetch('http://localhost:8500/Plants'); //TODO Change Fetch url
+        const plants = await response.json();
+        setPlants(plants);
+    }
+
+    const resetForm = () =>{
+        setPlantType("");
+        setPlantName("");
+        setSeasonComplete("0");
+    }
+
+    useEffect(() => {
+        loadPlants();
+    }, []);
     
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+        if(edit){
+            updatePlant()
+        }else{
+            addPlant()
+        }
+    }
+
+
+    //Set up table information
     const customClass = "plantTable"
     const theadData = ["Plant ID", "Plant Name", "Season Completed", "Modify"];
 
@@ -55,21 +118,10 @@ function Plants() {
             plant.plantID,
             plant.plantType,
             plant.seasonComplete ? "Yes" : "No",
-            <Buttons key={plant.id}  onDeleteClick={() => deletePlant(plant.plantID)} />
+            <Buttons key={plant.id}  onEditClick={()=> editPlant(plant.plantID)}  onDeleteClick={()=> deletePlant(plant.plantID)} />
         ]
     }));
 
-
-
-    const loadPlants = async ()=>{
-        const response = await fetch('http://localhost:8500/Plants'); //TODO Change Fetch url
-        const plants = await response.json();
-        setPlants(plants);
-    }
-
-    useEffect(() => {
-        loadPlants();
-    })
     return (
         <body>
             <header>
@@ -81,15 +133,15 @@ function Plants() {
                 </div>
                     
                 <section >
-                    <h3>Create New Entry</h3>
+                    <h3>{edit ?  "Edit Plant" : "Create New Entry"}</h3>
                     <article>
-                        <h5>What are you planting?</h5>
-                        <form onSubmit={addPlant}>
+                        <h5>{edit ?  "" : "What are you planting?"}</h5>
+                        <form onSubmit={submitHandler}>
                             <fieldset>
-                                <legend>New Plant</legend>
+                                <legend>{edit ?  "Edit Entry" : "New Plant"}</legend>
                                 <p>
                                     <label htmlFor="plantType">Plant Type </label>
-                                    <select name = "plantType" id="plantType">
+                                    <select name = "plantType" id="plantType" value={plantType} onChange={(e)=> setPlantType(e.target.value)}>
                                         <option value=""></option>
                                         <option value="Tomato">Tomato</option>
                                         <option value="Pepper">Pepper</option>
@@ -103,19 +155,19 @@ function Plants() {
                                 </p>
                                 <div>
                                     <label htmlFor="plantName">Enter Plant Name </label>
-                                    <input type="text" name="plantName" id="plantName"/>
+                                    <input type="text" name="plantName" id="plantName" value={plantName} onChange={(e)=> setPlantName(e.target.value)}/>
                                 </div>
                                 <div>
                                     <label>Season Complete</label>
 
-                                    <input type="radio" name="seasonComplete" id="seasonComplete" value={1}/>
+                                    <input type="radio" name="seasonComplete" id="seasonComplete" value="1" checked={seasonComplete === "1"} onChange={(e)=> setSeasonComplete("1")} />
                                     <label htmlFor="seasonComplete">Yes</label>
 
-                                    <input type="radio" name="seasonComplete" id="seasonNotComplete" value={0}/>
+                                    <input type="radio" name="seasonComplete" id="seasonNotComplete" value="0" checked={seasonComplete === "0"} onChange={(e)=> setSeasonComplete("0")} />
                                     <label htmlFor="seasonNotComplete">No</label>
                                 </div>
                                 <p>
-                                    <button class="btn btn-submit">Submit</button>
+                                    <button class="btn btn-submit" type="submit">{edit ? "Update" : "Submit"}</button>
                                 </p>
                             </fieldset>
                         </form>
