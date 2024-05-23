@@ -1,23 +1,25 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 
 function FertilizerDetails() {
+    const [fertilizerDetails, setFetilizerDetails] = useState([]);
+
     const customClass = "plantTable"
     const theadData = ["FertilizerDetailsID", "FertilizerID", "GrowthID", "ProductionID", "Modify"];
 
     const tbodyData = [
         {
             id: "1",
-            items: ["1","2", "1", "1", Buttons()],
+            items: ["1","2", "1", "1", <Buttons key={fertilizerDetails.id} />],
         },
         {
             id: "2",
-            items: ["2","3", "2", "2", Buttons()],
+            items: ["2","3", "2", "2", <Buttons key={fertilizerDetails.id} />],
         },
         {
             id: "3",
-            items: ["3","1", "3", "3", Buttons()],
+            items: ["3","1", "3", "3", <Buttons key={fertilizerDetails.id} />]
         }
     ];
     return (

@@ -1,23 +1,25 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 
 function GrowingLocations() {
+    const [growingLocations, setGrowingLocations] = useState([]);
+
     const customClass = "plantTable"
     const theadData = ["Location ID", "In Ground?", "In Container?", "Bed Type", "Container Type", "Modify"];
 
     const tbodyData = [
         {
             id: "1",
-            items: ["1", "Yes", "No", "Trellised Raised Bed", "NA", Buttons()],    
+            items: ["1", "Yes", "No", "Trellised Raised Bed", "NA", <Buttons key={growingLocations.id} />],    
         },
         {
             id: "2",
-            items: ["2", "No", "Yes", "NA", "5 Gallon Ceramic Pot", Buttons()],
+            items: ["2", "No", "Yes", "NA", "5 Gallon Ceramic Pot", <Buttons key={growingLocations.id} />],
         },
         {
             id: "3",
-            items: ["3", "Yes", "No", "Garden Row", "NA", Buttons()],
+            items: ["3", "Yes", "No", "Garden Row", "NA", <Buttons key={growingLocations.id} />]
         },
     ];
     return (

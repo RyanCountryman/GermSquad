@@ -1,23 +1,24 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 
 function Growths() {
+    const [growths, setGrowths] = useState([]);
     const customClass = "plantTable"
     const theadData = ["Growth ID", "Plant ID", "Plant Name", "Start Date", "Daily Sunlight Needed", "Water Frequency", "Fertilizer Frequency","Fertilizer","Location", "Modify"];
 
     const tbodyData = [
         {
             id: "1",
-            items: ["1", "1", "Tomato", "05/15/2024", "14 Hours", "Every 1 Days", "Every 3 Days","Liquid Grow Big","Ceramic 3 Gal", Buttons()],  
+            items: ["1", "1", "Tomato", "05/15/2024", "14 Hours", "Every 1 Days", "Every 3 Days","Liquid Grow Big","Ceramic 3 Gal", <Buttons key={growths.id} />],  
         },
         {
             id: "2",
-            items: ["2", "2", "Pepper", "04/15/2024", "16 Hours", "Every 2 Days", "Every 4 Days","Liquid Tiger's Blood","Ceramic 5 Gal", Buttons()],
+            items: ["2", "2", "Pepper", "04/15/2024", "16 Hours", "Every 2 Days", "Every 4 Days","Liquid Tiger's Blood","Ceramic 5 Gal", <Buttons key={growths.id} />],
         },
         {
             id: "3",
-            items: ["3", "3", "Cucumber", "04/15/2024", "10 Hours", "Every 1 Days", "Every 7 Days","Liquid Big Bloom","Raised Bed", Buttons()],
+            items: ["3", "3", "Cucumber", "04/15/2024", "10 Hours", "Every 1 Days", "Every 7 Days","Liquid Big Bloom","Raised Bed", <Buttons key={growths.id} />],
         },
     ];
     return (

@@ -1,27 +1,29 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 
 function LocationDetails() {
+    const [locationDetails, setLocationDetails] = useState([]);
+
     const customClass = "plantTable"
     const theadData = ["LocationDetailsID", "locationID", "growthsID", "productionsID", "Modify"];
 
     const tbodyData = [
         {
             id: "1",
-            items: ["1", "4", "1","1", Buttons()],
+            items: ["1", "4", "1","1", <Buttons key={locationDetails.id} />],
         },
         {
             id: "2",
-            items: ["2", "5", "2","2", Buttons()],
+            items: ["2", "5", "2","2", <Buttons key={locationDetails.id} />],
         },
         {
             id: "3",
-            items: ["3", "1", "3","3", Buttons()],
+            items: ["3", "1", "3","3", <Buttons key={locationDetails.id} />],
         },
         {
             id: "4",
-            items: ["4", "3", "4","4", Buttons()],
+            items: ["4", "3", "4","4", <Buttons key={locationDetails.id} />],
         }
     ];
     return (
