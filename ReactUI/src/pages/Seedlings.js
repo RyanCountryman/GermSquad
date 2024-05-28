@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
+import PlantsDropDown from '../components/PlantsDropdown'
 
 
 function Seedlings() {
@@ -18,7 +19,7 @@ function Seedlings() {
                 seedling.plantType,
                 datePlanted.toLocaleDateString(),
                 seedling.aveTemperature,
-                seedling.waterFrequency,
+                `Every ${seedling.waterFrequency} Days`,
                 seedling.germinationTime,
                 <Buttons key={seedling.id} />
             ]
@@ -52,20 +53,11 @@ function Seedlings() {
                     <article>
                         <h5>What are you planting?</h5>
                         <form action="/Seedlings" method="POST">
-                            <fieldset>
+                            <fieldset> 
                                 <legend>New Plant</legend>
                                 <p>
                                     <label for="seedling">Plant Type </label>
-                                    <select name = "plantType" id="plantType">
-                                        <option value="Tomato">Tomato</option>
-                                        <option value="Pepper">Pepper</option>
-                                        <option value="Lettuce">Lettuce</option>
-                                        <option value="Cucumber">Cucumber</option>
-                                        <option value="Squash">Squash</option>
-                                        <option value="Oregano">Oregano</option>
-                                        <option value="Basil">Basil</option>
-                                        <option value="Potato">Potato</option>
-                                    </select>
+                                    <PlantsDropDown></PlantsDropDown>
                                 </p>
                                 <p>
                                     <label for="plantingdate">Date Planted </label>

@@ -8,24 +8,30 @@ function LocationDetails() {
     const customClass = "plantTable"
     const theadData = ["LocationDetailsID", "locationID", "growthsID", "productionsID", "Modify"];
 
-    const tbodyData = [
-        {
-            id: "1",
-            items: ["1", "4", "1","1", <Buttons key={locationDetails.id} />],
-        },
-        {
-            id: "2",
-            items: ["2", "5", "2","2", <Buttons key={locationDetails.id} />],
-        },
-        {
-            id: "3",
-            items: ["3", "1", "3","3", <Buttons key={locationDetails.id} />],
-        },
-        {
-            id: "4",
-            items: ["4", "3", "4","4", <Buttons key={locationDetails.id} />],
+
+    const tbodyData = locationDetails.map(locationDetail => {  
+        return {
+            id: locationDetail.locationDetailsID,
+            items: [
+                locationDetail.locationDetailsID, //TODO ADD IN CONDITIONALS IF NEEDED FOR DISPLAY
+                locationDetail.growingLocationsID,
+                locationDetail.growthsID,
+                locationDetail.productionsID,
+                <Buttons key={locationDetail.id} />
+            ]
         }
-    ];
+    });
+
+    const loadLocationDetails = async ()=>{
+        const response = await fetch('http://localhost:8500/LocationDetails'); //TODO Change Fetch url
+        const locationDetails = await response.json();
+        setLocationDetails(locationDetails);
+    }
+
+    useEffect(() => {
+        loadLocationDetails();
+    })
+
     return (
         <body>
         <header>

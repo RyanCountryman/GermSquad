@@ -14,14 +14,7 @@ function Plants() {
     
 
     const addPlant = async (e) =>{
-        //e.preventDefault();
-        //const form = e.target;
-        //const formData = new FormData(form);
-
-        //const plantType = formData.get('plantType');
-        //const plantName = formData.get('plantName');
-
-        //Ensure no duplicate plantTypes are being submitted to backend
+         //Ensure no duplicate plantTypes are being submitted to backend
         if((plantType && plantName) || (!plantType && !plantName)){
             alert('Please select a plantType from the drop down or enter a new plant');
             return;
@@ -43,16 +36,19 @@ function Plants() {
     };
 
     const editPlant = async (plantID) => {
-        const response = await fetch(`http://localhost:8500/Plants/${plantID}`);
-        if (response.ok) {
-            const plant = await response.json();
-            //setPlantType(plant.plantType);
-            setPlantName(plant.plantName);
-            setSeasonComplete(plant.seasonComplete);
-            setEdit(true);
-            setEditPlantID(plantID);
-        } else {
-            console.error(`Failed to fetch Plant with plantID = ${plantID}, status code = ${response.status}`);
+        if (edit){
+             setEdit(false)
+        } else{
+            const response = await fetch(`http://localhost:8500/Plants/${plantID}`);
+            if (response.ok) {
+                const plant = await response.json();
+                setPlantName(plant.plantName);
+                setSeasonComplete(plant.seasonComplete);
+                setEdit(true);
+                setEditPlantID(plantID);
+            } else {
+                console.error(`Failed to fetch Plant with plantID = ${plantID}, status code = ${response.status}`);
+            }
         }
     };
 

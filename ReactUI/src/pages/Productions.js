@@ -1,29 +1,46 @@
 import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
+import PlantsDropDown from '../components/PlantsDropdown'
 
 function Productions() {
     const [productions, setProductions] = useState([]);
-
+    // Fill Productions Table
     const customClass = "plantTable"
     const theadData = ["Production ID", "Plant ID", "Plant Name", "Start Date", "End Production Date", "Water Frequency", "Fertilizer Frequency", "Total Yield","Fertilizer","Location", "Modify"];
 
-    const tbodyData = [
-        {
-            id: "1",
-            items: ["1", "1", "Tomato", "06/15/2024", "09/15/2024", "Every 1 Days", "Every 5 Days", "10 Pounds","Liquid Grow Big","Ceramic 3 Gal", <Buttons key={productions.id} />],
-            
-            
-        },
-        {
-            id: "2",
-            items: ["2", "2", "Pepper", "07/15/2024", "NA", "Every 2 Days", "Every 7 Days", "NA","Liquid Tiger's Blood","Ceramic 5 Gal", <Buttons key={productions.id} />],
-        },
-        {
-            id: "3",
-            items: ["3", "3", "Cucumber", "05/15/2024", "10/15/2024", "Every 1 Days", "Every 7 Days", "20 Pounds","Liquid Big Bloom","Raised Bed", <Buttons key={productions.id} />],
+    const tbodyData = productions.map(production => {
+        const dateStarted = new Date(production.startDate);
+        const dateEnded = new Date(production.endProduction);
+        const growLocation = production.isGround ? production.bedType : production.containerType;  
+        return {
+            id: production.productionID,
+            items: [
+                production.productionID,
+                production.plantID,
+                production.plantType,
+                dateStarted.toLocaleDateString(),
+                dateEnded.toLocaleDateString(),
+                `Every ${production.waterFrequency} Days`,
+                `Every ${production.fertilizerFrequency} Days`,
+                `${production.yield} Pounds`,
+                production.fertilizerType,
+                growLocation,
+                <Buttons key={production.id} />
+            ]
         }
-    ];
+    });
+    const loadProductions = async ()=>{
+        const response = await fetch('http://localhost:8500/Productions'); //TODO Change Fetch url
+        const productions = await response.json();
+        setProductions(productions);
+    }
+
+    useEffect(() => {
+        loadProductions();
+    })
+
+
     return (
         <body>
             <header>
@@ -66,13 +83,21 @@ function Productions() {
                                     <input type="Date"/>
                                 </p>
                                 <p>
+                                    <label for="endProduction">Production End Date </label>
+                                    <input type="Date"/>
+                                </p>
+                                <p>
                                     <label for="waterFreq">Water Frequency (Days) </label>
                                     <input type="number"/>
                                 </p>
                                 <p>
                                     <label for="fertFreq">Fertilizer Frequency (Days) </label>
                                     <input type="number"/>
-                                </p> 
+                                </p>
+                                <p>
+                                    <label for="yield">Yield (Pounds) </label>
+                                    <input type="number"/>
+                                </p>  
                                 <p>
                                     <button class="btn btn-submit">Submit</button>
                                 </p>

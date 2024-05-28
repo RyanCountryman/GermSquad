@@ -3,27 +3,39 @@ import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 
 function Fertilizers() {
-    const [Fertilizers, setFertilizers] = useState([]);
+    const [fertilizers, setFertilizers] = useState([]);
 
     const customClass = "plantTable"
     const theadData = ["Fertilizer ID", "Fertilizer Type", "Nitrogen", "Phosphorous", "Potassium", "Modify"];
 
-    const tbodyData = [
-        {
-            id: "1",
-            items: ["1", "Liquid Big Bloom", "0", "0.5", "0.7", <Buttons key={Fertilizers.id} />],
-            
-            
-        },
-        {
-            id: "2",
-            items: ["2", "Liquid Grow Big", "6", "4", "4", <Buttons key={Fertilizers.id} />],
-        },
-        {
-            id: "3",
-            items: ["3", "Liquid Tiger Bloom", "2", "8", "4", <Buttons key={Fertilizers.id} />],
-        },
-    ];
+
+    const tbodyData = fertilizers.map(fertilizer => {  
+        return {
+            id: fertilizer.fertilizerID,
+            items: [
+                fertilizer.fertilizerID,
+                fertilizer.fertilizerType,
+                fertilizer.nitrogen,
+                fertilizer.phosphorous,
+                fertilizer.potassium,
+                <Buttons key={fertilizer.id} />
+            ]
+        }
+    });
+
+
+    const loadFertilizers = async ()=>{
+        const response = await fetch('http://localhost:8500/Fertilizers'); //TODO Change Fetch url
+        const fertilizers = await response.json();
+        setFertilizers(fertilizers);
+    }
+
+    useEffect(() => {
+        loadFertilizers();
+    })
+
+
+
     return (
         <body>
         <header>

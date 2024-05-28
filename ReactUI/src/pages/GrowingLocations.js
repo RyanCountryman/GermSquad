@@ -8,20 +8,32 @@ function GrowingLocations() {
     const customClass = "plantTable"
     const theadData = ["Location ID", "In Ground?", "In Container?", "Bed Type", "Container Type", "Modify"];
 
-    const tbodyData = [
-        {
-            id: "1",
-            items: ["1", "Yes", "No", "Trellised Raised Bed", "NA", <Buttons key={growingLocations.id} />],    
-        },
-        {
-            id: "2",
-            items: ["2", "No", "Yes", "NA", "5 Gallon Ceramic Pot", <Buttons key={growingLocations.id} />],
-        },
-        {
-            id: "3",
-            items: ["3", "Yes", "No", "Garden Row", "NA", <Buttons key={growingLocations.id} />]
-        },
-    ];
+
+    const tbodyData = growingLocations.map(growingLocation => {  
+        return {
+            id: growingLocation.locationID,
+            items: [
+                growingLocation.locationID,
+                growingLocation.isGround,
+                growingLocation.isContainer,
+                growingLocation.isGround ? growingLocation.bedType : "NA",
+                growingLocation.isContainer? growingLocation.containerType : "NA",
+                <Buttons key={growingLocation.id} />
+            ]
+        }
+    });
+
+
+    const loadGrowingLocations = async ()=>{
+        const response = await fetch('http://localhost:8500/GrowingLocations'); //TODO Change Fetch url
+        const growingLocations = await response.json();
+        setGrowingLocations(growingLocations);
+    }
+
+    useEffect(() => {
+        loadGrowingLocations();
+    })
+
     return (
         <body>
             <header>

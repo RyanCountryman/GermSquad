@@ -1,26 +1,47 @@
 import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
+import PlantsDropDown from '../components/PlantsDropdown'
 
 function Growths() {
     const [growths, setGrowths] = useState([]);
+
+    // Fill Growths Table
     const customClass = "plantTable"
     const theadData = ["Growth ID", "Plant ID", "Plant Name", "Start Date", "Daily Sunlight Needed", "Water Frequency", "Fertilizer Frequency","Fertilizer","Location", "Modify"];
 
-    const tbodyData = [
-        {
-            id: "1",
-            items: ["1", "1", "Tomato", "05/15/2024", "14 Hours", "Every 1 Days", "Every 3 Days","Liquid Grow Big","Ceramic 3 Gal", <Buttons key={growths.id} />],  
-        },
-        {
-            id: "2",
-            items: ["2", "2", "Pepper", "04/15/2024", "16 Hours", "Every 2 Days", "Every 4 Days","Liquid Tiger's Blood","Ceramic 5 Gal", <Buttons key={growths.id} />],
-        },
-        {
-            id: "3",
-            items: ["3", "3", "Cucumber", "04/15/2024", "10 Hours", "Every 1 Days", "Every 7 Days","Liquid Big Bloom","Raised Bed", <Buttons key={growths.id} />],
-        },
-    ];
+    const tbodyData = growths.map(growth => {
+        const datePlanted = new Date(growth.startDate);
+        const growLocation = growth.isGround ? growth.bedType : growth.containerType;  
+        return {
+            id: growth.growthID,
+            items: [
+                growth.growthID,
+                growth.plantID,
+                growth.plantType,
+                datePlanted.toLocaleDateString(),
+                `${growth.dailySunlight} Hours`,
+                `Every ${growth.waterFrequency} Days`,
+                `Every ${growth.fertilizerFrequency} Days`,
+                growth.fertilizerType,
+                growLocation,
+                <Buttons key={growth.id} />
+            ]
+        }
+    });
+
+
+    const loadGrowths = async ()=>{
+        const response = await fetch('http://localhost:8500/Growths'); //TODO Change Fetch url
+        const growths = await response.json();
+        setGrowths(growths);
+    }
+
+    useEffect(() => {
+        loadGrowths();
+    })
+
+
     return (
         <body>
         <header>
@@ -39,28 +60,15 @@ function Growths() {
                             <legend>New Growth</legend>
                             <p>
                                 <label for="Growth">Plant Type </label>
-                                <select name = "plantType" id="plantType">
-                                    <option value="Tomato">Tomato</option>
-                                    <option value="Pepper">Pepper</option>
-                                    <option value="Lettuce">Lettuce</option>
-                                    <option value="Cucumber">Cucumber</option>
-                                    <option value="Squash">Squash</option>
-                                    <option value="Oregano">Oregano</option>
-                                    <option value="Basil">Basil</option>
-                                    <option value="Potato">Potato</option>
-                                </select>
-                            </p>
-                            <p>
-                            <label for="Growth">Which one? </label>
-                                <select name = "plantType" id="plantType">
-                                    <option value="ID 1">ID 1</option>
-                                    <option value="ID 2">ID 2</option>
-                                    <option value="ID 3">ID 3</option>
-                                </select>
+                                <PlantsDropDown></PlantsDropDown>
                             </p>
                             <p>
                                 <label for="startDate">Start Date </label>
                                 <input type="Date"/>
+                            </p>
+                            <p>
+                                <label for="dailySunlight">Daily Sunlight Needed (Hours) </label>
+                                <input type="number"/>
                             </p>
                             <p>
                                 <label for="waterFreq">Water Frequency (Days) </label>

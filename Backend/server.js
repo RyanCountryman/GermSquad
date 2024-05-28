@@ -101,6 +101,20 @@ app.delete('/DeletePlant/:plantID', (req,res) => {
     });
 });
 
+
+app.get('/PlantsDrop',(req,res) => {
+    db.query('SELECT plantID, plantType FROM plants', (error ,results) => {
+        if(error){
+            console.error('Error running dropdown population query:', error);
+            res.status(500).send('Error fetching plants for dropdown');
+            return;
+        }
+        res.json(results);
+    })
+});
+
+
+
 app.get('/Seedlings',(req,res) => {
     db.query(`
         SELECT 
@@ -124,9 +138,113 @@ app.get('/Seedlings',(req,res) => {
     })
 });
 
+app.get('/Growths',(req,res) => {
+    db.query(`
+        SELECT 
+            Growths.growthID,
+            Growths.plantID,
+            Plants.plantType,
+            Growths.startDate,
+            Growths.dailySunlight,
+            Growths.waterFrequency,
+            Growths.fertilizerFrequency,
+            Fertilizers.fertilizerType,
+            Growinglocations.isGround,
+            Growinglocations.isContainer,
+            Growinglocations.bedType,
+            Growinglocations.containerType
+        FROM Growths
+        LEFT JOIN FertilizerDetails ON Growths.growthID = FertilizerDetails.growthsID
+        LEFT JOIN Fertilizers ON FertilizerDetails.fertilizerID = Fertilizers.fertilizerID
+        LEFT JOIN LocationDetails ON Growths.growthID = LocationDetails.growthsID
+        LEFT JOIN GrowingLocations ON LocationDetails.growingLocationsID = GrowingLocations.locationID
+        LEFT JOIN Plants ON Growths.plantID = Plants.plantID;
+        `, (error, results) => {
+        if(error){
+            console.error('Error running growth query:', error);
+            res.status(500).send('Error fetching growth data');
+            return;
+        }
+        //console.log(Object.keys(results[0]));
+        res.json(results);
+    })
+});
 
+app.get('/Productions',(req,res) => {
+    db.query(`
+        SELECT 
+            Productions.productionID,
+            Productions.plantID,
+            Plants.plantType,
+            Productions.startDate,
+            Productions.endProduction,
+            Productions.waterFrequency,
+            Productions.yield,
+            Productions.fertilizerFrequency,
+            Fertilizers.fertilizerType,
+            Growinglocations.isGround,
+            Growinglocations.isContainer,
+            Growinglocations.bedType,
+            Growinglocations.containerType
+        FROM Productions
+        LEFT JOIN FertilizerDetails ON Productions.productionID = FertilizerDetails.productionsID
+        LEFT JOIN Fertilizers ON FertilizerDetails.fertilizerID = Fertilizers.fertilizerID
+        LEFT JOIN LocationDetails ON Productions.productionID = LocationDetails.productionsID
+        LEFT JOIN GrowingLocations ON LocationDetails.growingLocationsID = GrowingLocations.locationID
+        LEFT JOIN Plants ON Productions.plantID = Plants.plantID;
+        `, (error, results) => {
+        if(error){
+            console.error('Error running production query:', error);
+            res.status(500).send('Error fetching production data');
+            return;
+        }
+        res.json(results);
+    })
+});
 
+app.get('/Fertilizers',(req,res) => {
+    db.query(` SELECT * FROM Fertilizers`, (error, results) => {
+        if(error){
+            console.error('Error running fertilizer query:', error);
+            res.status(500).send('Error fetching fertilizer data');
+            return;
+        }
+        res.json(results);
+    })
+});
 
+app.get('/GrowingLocations',(req,res) => {
+    db.query(` SELECT * FROM GrowingLocations`, (error, results) => {
+        if(error){
+            console.error('Error running growing location query:', error);
+            res.status(500).send('Error fetching growing location data');
+            return;
+        }
+        res.json(results);
+    })
+});
+
+app.get('/FertilizerDetails',(req,res) => {
+    db.query(` SELECT * FROM FertilizerDetails`, (error, results) => {
+        if(error){
+            console.error('Error running FertilizerDetails query:', error);
+            res.status(500).send('Error fetching FertilizerDetails data');
+            return;
+        }
+        res.json(results);
+    })
+});
+
+app.get('/LocationDetails',(req,res) => {
+    db.query(` SELECT * FROM LocationDetails`, (error, results) => {
+        if(error){
+            console.error('Error running FertilizerDetails query:', error);
+            res.status(500).send('Error fetching FertilizerDetails data');
+            return;
+        }
+        res.json(results);
+    })
+});
 
 
 
