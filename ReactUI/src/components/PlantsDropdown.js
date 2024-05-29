@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 
-const PlantDropDown = () =>{
+const PlantDropDown = ({selectedPlantID, setSelectedPlantID}) =>{
     const [plants, setPlants] = useState([]);
-    const [selectedPlantID, setSelectedPlantID] = useState('')
+    //const [selectedPlantID, setSelectedPlantID] = useState('')
 
     const populateDropDown = async ()=>{
         const response = await fetch('http://localhost:8500/PlantsDrop'); //TODO Change Fetch url

@@ -20,6 +20,9 @@ app.use(express.json());
 
 // API Routes for backend CRUD:
 
+//--------------------------------------PLANTS OPERATIONS-------------------------------------------
+
+
 //Read full plants table TODO:CHECK STATUS CODES
 app.get('/Plants',(req,res) => {
     db.query('SELECT * FROM Plants', (error, results) => {
@@ -66,18 +69,16 @@ app.post('/CreatePlant', (req,res) => {
 });
 
 app.put('/EditPlant/:editPlantID', (req,res) =>{
-    //console.log(req.body);
-    
     const plantID = req.params.editPlantID;
-    console.log(plantID);
     let { plantType, plantName,seasonComplete } = req.body;
-    console.log(`plantType ${plantType}   plantName ${plantName}  seasonComplete${seasonComplete}`);
     if(!plantType) plantType = plantName;
-    //if (!seasonComplete) seasonComplete = 0;
-    const query = `UPDATE Plants SET
-	                    plantType = coalesce(?,plantType), 
-	                    seasonComplete = coalesce(?,seasonComplete)
-                    WHERE plantID = ?`;
+
+    const query = `
+                UPDATE Plants SET
+	                plantType = coalesce(?,plantType), 
+	                seasonComplete = coalesce(?,seasonComplete)
+                WHERE plantID = ?`;
+
     db.query(query, [plantType, seasonComplete, plantID], (error, results) =>{
         if(error){
             console.error("Issue updating plant entry");
@@ -114,6 +115,8 @@ app.get('/PlantsDrop',(req,res) => {
 });
 
 
+//--------------------------------------SEEDLINGS OPERATIONS-------------------------------------------
+
 
 app.get('/Seedlings',(req,res) => {
     db.query(`
@@ -138,6 +141,84 @@ app.get('/Seedlings',(req,res) => {
     })
 });
 
+//Get Seedling By ID
+app.get('/Seedlings/:seedlingID', (req,res) =>{
+    const seedlingID = req.params.seedlingID;
+    db.query(`Select * From Seedlings WHERE seedlingID = ?`,[seedlingID], (error,results) =>{
+        if(error){
+            console.log(`Error obtaing seedling with ID: ${seedlingID}`);
+            res.status(500).send('Unable to find seedling')
+            return;
+        }
+        console.log(results);
+        res.json(results);
+    })
+});
+
+//Create New Seedling
+app.post('/CreateSeedling', (req,res) => {
+    let { plantID, datePlanted, aveTemperature, waterFrequency, germinationTime } = req.body;
+    console.log(`plantID:${plantID} datePlant:${datePlanted} aveTemp:${aveTemperature}  waterFreq:${waterFrequency}  germTime:${germinationTime}  `)
+    const query = `
+                INSERT INTO Seedlings (
+                    plantID,
+                    datePlanted,
+                    aveTemperature,
+                    waterFrequency,
+                    germinationTime) 
+                VALUES (?,?,?,?,?)`;
+    db.query(query, [plantID, datePlanted, aveTemperature, waterFrequency, germinationTime], (error, results) =>{
+        if(error){
+            console.error("Issue inserting new seedling entry");
+            res.status(500).send('Unable to create seedling plant');
+            return;
+        }
+        res.status(201).send('New Seedling created');
+    });
+});
+
+
+//Update existing Seedling Entity
+app.put('/EditSeedling/:editSeedlingID', (req,res) =>{
+    const seedlingID = req.params.editSeedlingID;
+    let { datePlanted, aveTemperature, waterFrequency, germinationTime } = req.body;
+
+    const query = `
+                UPDATE Seedlings SET
+                    datePlanted = coalesce(?,datePlanted),
+                    aveTemperature = coalesce(?,aveTemperature), 
+                    waterFrequency = coalesce(?,waterFrequency),  
+                    germinationTime = coalesce(?,germinationTime)
+                WHERE seedlingID = ?`;
+    db.query(query, [datePlanted, aveTemperature, waterFrequency, germinationTime, seedlingID], (error, results) =>{
+        if(error){
+            console.error("Issue updating seedling entry");
+            res.status(500).send('Unable to update seedling entry');
+            return;
+        }
+        res.status(201).send('Seedling updated');
+    });
+});
+
+
+//Delete existing seedling entry
+app.delete('/DeleteSeedling/:seedlingID', (req,res) => {
+    const seedlingID = req.params.seedlingID;
+    db.query('DELETE FROM Seedlings WHERE seedlingID = ?', [seedlingID], (error, results) =>{
+        if(error){
+            console.error(`Issue deleting seedling entry with seedlingID ${seedlingID} `);
+            res.status(500).send('Unable to delete seedling');
+            return;
+        }
+        res.status(204).send("Seedling deleted");
+    });
+});
+
+
+
+//--------------------------------------GROWTHS OPERATIONS-------------------------------------------
+
+//Display All Growths
 app.get('/Growths',(req,res) => {
     db.query(`
         SELECT 
@@ -170,6 +251,83 @@ app.get('/Growths',(req,res) => {
     })
 });
 
+//Get Growth By ID
+app.get('/Growths/:growthID', (req,res) =>{
+    const growthID = req.params.growthID;
+    db.query(`Select * From Growths WHERE growthID = ?`,[growthID], (error,results) =>{
+        if(error){
+            console.log(`Error obtaing growth with ID: ${growthID}`);
+            res.status(500).send('Unable to find growth')
+            return;
+        }
+        console.log(results);
+        res.json(results);
+    })
+});
+
+//Create New Growth
+app.post('/CreateGrowth', (req,res) => {
+    let { plantID, startDate, dailySunlight, waterFreq, fertilizerFrequency } = req.body;
+    const query = `
+            INSERT INTO Growths (
+                plantID,
+                startDate,
+                dailySunlight,
+                waterFrequency,
+                fertilizerFrequency)
+            VALUES (?,?,?,?,?)`;
+    db.query(query, [plantID, startDate, dailySunlight, waterFreq, fertilizerFrequency], (error, results) =>{
+        if(error){
+            console.error("Issue inserting new growth entry");
+            res.status(500).send('Unable to create growth plant');
+            return;
+        }
+        res.status(201).send('New Growth created');
+    });
+});
+
+//Update existing Growth Entity
+app.put('/EditGrowth/:editGrowthID', (req,res) =>{
+    const growthID = req.params.editGrowthID;
+    let { startDate, dailySunlight, waterFrequency, fertilizerFrequency } = req.body;
+
+    const query = `
+            UPDATE Growths SET
+                startDate = coalesce(?,startDate),
+                dailySunlight = coalesce(?,dailySunlight), 
+                waterFrequency = coalesce(?,waterFrequency),  
+	            fertilizerFrequency = coalesce(?,fertilizerFrequency)
+            WHERE growthID = ?`;
+    db.query(query, [startDate, dailySunlight, waterFrequency, fertilizerFrequency, growthID], (error, results) =>{
+        if(error){
+            console.error("Issue updating growth entry");
+            res.status(500).send('Unable to update growth entry');
+            return;
+        }
+        res.status(201).send('Growth updated');
+    });
+});
+
+
+
+//Delete existing growth entry
+app.delete('/DeleteGrowth/:growthID', (req,res) => {
+    const growthID = req.params.growthID;
+    db.query('DELETE FROM Growths WHERE growthID = ?', [growthID], (error, results) =>{
+        if(error){
+            console.error(`Issue deleting growth entry with growthID ${growthID} `);
+            res.status(500).send('Unable to delete growth');
+            return;
+        }
+        res.status(204).send("Growth deleted");
+    });
+});
+
+
+
+//--------------------------------------PRODUCTIONS OPERATIONS-------------------------------------------
+
+//Display all Productions
 app.get('/Productions',(req,res) => {
     db.query(`
         SELECT 

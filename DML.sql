@@ -100,13 +100,12 @@ INSERT INTO Plants (plantType, seasonComplete, waterSummation)
 VALUES (:plantTypeInput, :seasonCompleteInput, :waterSummationInput);
 
 -- Create a new Seedling
-INSERT INTO Seedlings (plantID, datePlanted, aveTemperature, waterFrequency, waterAmount, germinationTime) 
-VALUES (:plantID_from_dropdown_Input, :datePlantedInput, :aveTemperatureInput, :waterFrequencyInput, :waterAmountInput, :germinationTimeInput);
+INSERT INTO Seedlings (plantID, datePlanted, aveTemperature, waterFrequency, germinationTime) 
+VALUES (:plantID_from_dropdown_Input, :datePlantedInput, :aveTemperatureInput, :waterFrequencyInput, :germinationTimeInput);
 
 -- Create a new Growth
-
-INSERT INTO Growths (plantID, startDate, dailySunlight, waterFrequency, waterAmount, fertilizerFrequency)
-VALUES (:plantID_from_dropdown_Input, :startDateInput, :dailySunlightInput, :waterFrequencyInput, :waterAmountInput, :fertilizerFrequencyInput);
+INSERT INTO Growths (plantID, startDate, dailySunlight, waterFrequency,  fertilizerFrequency)
+VALUES (:plantID_from_dropdown_Input, :startDateInput, :dailySunlightInput, :waterFrequencyInput, :fertilizerFrequencyInput);
 
 -- Create a new Production
 INSERT INTO Productions (plantID, startDate, endProduction, waterFrequency, waterAmount, fertilizerFrequency, yield)
@@ -137,7 +136,6 @@ UPDATE Seedlings SET
 	datePlanted = :datePlantedInput,
 	aveTemperature = :aveTemperatureInput, 
 	waterFrequency = :waterFrequencyInput, 
-	waterAmount = :waterAmountInput, 
 	germinationTime = :germinationTimeInput
 WHERE seedlingID = :seedlingIDInput;
 
@@ -145,8 +143,7 @@ WHERE seedlingID = :seedlingIDInput;
 UPDATE Growths SET
 	startDate = :startDateInput,
 	dailySunlight = :dailySunlightInput, 
-	waterFrequency = :waterFrequencyInput, 
-	waterAmount = :waterAmountInput, 
+	waterFrequency = :waterFrequencyInput,
 	fertilizerFrequency = :fertilizerFrequencyInput
 WHERE growthID = :growthIDInput;
 
