@@ -12,6 +12,7 @@ function Plants() {
     const [plantType, setPlantType] = useState("");
     const [plantName, setPlantName] = useState("");
     const [seasonComplete, setSeasonComplete] = useState("0")
+    const [plantSelection, setPlantSelection] = useState("")
     
 
     const addPlant = async (e) =>{
@@ -36,9 +37,12 @@ function Plants() {
         }
     };
 
+    //GET Plant attribute values and store for edit
     const editPlant = async (plantID) => {
+        resetForm();
         if (edit){
-             setEdit(false)
+             setEdit(false);
+
         } else{
             const response = await fetch(`${URL}/Plants/${plantID}`);
             if (response.ok) {
@@ -53,6 +57,7 @@ function Plants() {
         }
     };
 
+    //Update selected ID with changed values in form
     const updatePlant = async () =>{
         const response = await fetch(`${URL}/EditPlant/${editPlantID}`, {
             method: 'PUT',

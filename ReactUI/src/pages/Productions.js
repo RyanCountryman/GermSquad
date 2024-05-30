@@ -2,9 +2,86 @@ import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 import PlantsDropDown from '../components/PlantsDropdown'
+import URL from '../config'
 
 function Productions() {
     const [productions, setProductions] = useState([]);
+    const [edit, setEdit] = useState(false);
+    const [editProductionID, setEditProductionID] = useState(null)
+    const [plantID, setPlantID] = useState("")
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+    const [waterFrequency, setWaterFrequency] = useState("")
+    const [fertilizerFrequency, setFertilizerFrequency] = useState("")
+    const [totalYield, setTotalYield] = useState("")
+
+
+
+    const addProduction = async (e) =>{
+        const response = await fetch(`${URL}/CreateProduction`, {
+            method: 'POST',
+            body: JSON.stringify({ plantID, startDate, endDate, waterFrequency, fertilizerFrequency, totalYield}),
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        if(response.ok) {
+            loadProductions();
+            resetForm();
+        }else{
+            console.error('Failed to create new production entry');
+        }
+    }
+
+
+    const editProduction = async (productionID) => {
+        resetForm();
+        if (edit){
+             setEdit(false)
+        } else{
+            const response = await fetch(`${URL}/Productions/${productionID}`);
+            if (response.ok) {
+                const production = await response.json();
+                setStartDate(production.startDate);
+                setEndDate(production.endProduction);
+                setWaterFrequency(production.waterFrequency);
+                setFertilizerFrequency(production.fertilizerFrequency);
+                setTotalYield(production.yield);
+                setEdit(true);
+                setEditProductionID(productionID);
+            } else {
+                console.error(`Failed to fetch Production with productionID = ${productionID}, status code = ${response.status}`);
+            }
+        }
+    }
+
+    const updateProduction = async () =>{
+        const response = await fetch(`${URL}/EditProduction/${editProductionID}`, {
+            method: 'PUT',
+            body: JSON.stringify({ plantID, startDate, endDate, waterFrequency, fertilizerFrequency, totalYield }),
+            headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (response.ok) {
+            loadProductions();
+            resetForm();
+            setEdit(false);
+            setEditProductionID(null);
+        } else {
+            console.error('Failed to update production entry');
+        }
+    }
+
+
+    const DeleteProduction = async (productionID) =>{
+        const response = await fetch(`${URL}/DeleteProduction/${productionID}`, { method: 'DELETE' });
+        if(response.ok){
+            loadProductions();
+        } else{
+            console.error(`Failed to delete Production with productionID = ${productionID}, status code = ${response.status}`);
+        }
+    }
+
+
     // Fill Productions Table
     const customClass = "plantTable"
     const theadData = ["Production ID", "Plant ID", "Plant Name", "Start Date", "End Production Date", "Water Frequency", "Fertilizer Frequency", "Total Yield","Fertilizer","Location", "Modify"];
@@ -26,12 +103,12 @@ function Productions() {
                 `${production.yield} Pounds`,
                 production.fertilizerType,
                 growLocation,
-                <Buttons key={production.id} />
+                <Buttons key={production.id} onEditClick={()=> editProduction(production.productionID)} onDeleteClick={()=> DeleteProduction(production.productionID)} />
             ]
         }
     });
     const loadProductions = async ()=>{
-        const response = await fetch('http://localhost:8500/Productions'); //TODO Change Fetch url
+        const response = await fetch(`${URL}/Productions`); //TODO Change Fetch url
         const productions = await response.json();
         setProductions(productions);
     }
@@ -40,6 +117,23 @@ function Productions() {
         loadProductions();
     })
 
+    const resetForm = () =>{
+        setPlantID("");
+        setStartDate("");
+        setEndDate("");
+        setWaterFrequency("");
+        setFertilizerFrequency("");
+        setTotalYield("");
+    }
+
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+        if(edit){
+            updateProduction();
+        }else{
+            addProduction();
+        }
+    }
 
     return (
         <body>
@@ -51,55 +145,40 @@ function Productions() {
                     <Table theadData={theadData} tbodyData={tbodyData} customClass={customClass} />
                 </div>
                 <section >
-                    <h3>Create New Entry</h3>
+                    <h3>{edit ? "Edit Production" : "Create New Entry"}</h3>
                     <article>
-                        <h5>Which plant is this?</h5>
-                        <form action="/Productions" method="POST">
+                        <h5>{edit ? "" : "Which plant is this?"}</h5>
+                        <form onSubmit={submitHandler}>
                             <fieldset>
-                                <legend>New Production</legend>
+                                <legend>{edit ? "Edit Entry" : "New Production"}</legend>
+                                {!edit && (   
+                                    <p>
+                                        <label htmlFor="Production">Plant Type </label>
+                                        <PlantsDropDown selectedPlantID={plantID} setSelectedPlantID={setPlantID}></PlantsDropDown>
+                                    </p>
+                                )}
                                 <p>
-                                    <label for="Production">Plant Type </label>
-                                    <select name = "plantType" id="plantType">
-                                        <option value="Tomato">Tomato</option>
-                                        <option value="Pepper">Pepper</option>
-                                        <option value="Lettuce">Lettuce</option>
-                                        <option value="Cucumber">Cucumber</option>
-                                        <option value="Squash">Squash</option>
-                                        <option value="Oregano">Oregano</option>
-                                        <option value="Basil">Basil</option>
-                                        <option value="Potato">Potato</option>
-                                    </select>
+                                    <label htmlFor="startDate">Start Date </label>
+                                    <input type="Date" name="startDate" id="startDate" value={startDate} onChange={(e)=> setStartDate(e.target.value)}/>
                                 </p>
                                 <p>
-                                <label for="Growth">Which one? </label>
-                                    <select name = "plantType" id="plantType">
-                                        <option value="ID 1">ID 1</option>
-                                        <option value="ID 2">ID 2</option>
-                                        <option value="ID 3">ID 3</option>
-                                    </select>
+                                    <label htmlFor="endDate">Production End Date </label>
+                                    <input type="Date" name="endDate" id="endDate" value={endDate} onChange={(e)=> setEndDate(e.target.value)}/>
                                 </p>
                                 <p>
-                                    <label for="startDate">Start Date </label>
-                                    <input type="Date"/>
+                                    <label htmlFor="waterFreq">Water Frequency (Days) </label>
+                                    <input type="number" name="waterFreq" id="waterFreq" value={waterFrequency} onChange={(e)=> setWaterFrequency(e.target.value)}/> 
                                 </p>
                                 <p>
-                                    <label for="endProduction">Production End Date </label>
-                                    <input type="Date"/>
+                                    <label htmlFor="fertFreq">Fertilizer Frequency (Days) </label>
+                                    <input type="number" name="fertFreq" id="fertFreq" value={fertilizerFrequency} onChange={(e)=> setFertilizerFrequency(e.target.value)}/> 
                                 </p>
                                 <p>
-                                    <label for="waterFreq">Water Frequency (Days) </label>
-                                    <input type="number"/>
-                                </p>
-                                <p>
-                                    <label for="fertFreq">Fertilizer Frequency (Days) </label>
-                                    <input type="number"/>
-                                </p>
-                                <p>
-                                    <label for="yield">Yield (Pounds) </label>
-                                    <input type="number"/>
+                                    <label htmlFor="yield">Yield (Pounds) </label>
+                                    <input type="number" name="yield" id="yield" value={totalYield} onChange={(e)=> setTotalYield(e.target.value)}/> 
                                 </p>  
                                 <p>
-                                    <button class="btn btn-submit">Submit</button>
+                                    <button className="btn btn-submit" type="submit">{edit ? "Update" : "Submit"}</button>
                                 </p>
                             </fieldset>
                         </form>

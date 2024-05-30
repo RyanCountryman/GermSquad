@@ -11,7 +11,7 @@ function Growths() {
     const [plantID, setPlantID] = useState("")
     const [startDate, setStartDate] = useState("")
     const [dailySunlight, setDailySunlight] = useState("")
-    const [waterFrequency, setWaterFreq] = useState("")
+    const [waterFrequency, setWaterFrequency] = useState("")
     const [fertilizerFrequency, setFertilizerFrequency] = useState("") 
 
 
@@ -20,7 +20,7 @@ function Growths() {
             method: 'POST',
             body: JSON.stringify({ plantID, startDate, dailySunlight, waterFrequency, fertilizerFrequency}),
             headers: {'Content-Type': 'application/json'}
-        });
+        })
 
         if(response.ok) {
             loadGrowths();
@@ -28,9 +28,10 @@ function Growths() {
         }else{
             console.error('Failed to create new growths entry');
         }
-    };
+    }
 
     const editGrowth = async (growthID) => {
+        resetForm();
         if (edit){
              setEdit(false)
         } else{
@@ -39,7 +40,7 @@ function Growths() {
                 const growth = await response.json();
                 setStartDate(growth.startDate)
                 setDailySunlight(growth.dailySunlight)
-                setWaterFreq(growth.waterFrequency)
+                setWaterFrequency(growth.waterFrequency)
                 setFertilizerFrequency(growth.fertilizerFrequency)
                 setEdit(true);
                 setEditGrowthID(growthID);
@@ -47,14 +48,14 @@ function Growths() {
                 console.error(`Failed to fetch Growth with growthID = ${growthID}, status code = ${response.status}`);
             }
         }
-    };
+    }
 
     const updateGrowth = async () =>{
         const response = await fetch(`${URL}/EditGrowth/${editGrowthID}`, {
             method: 'PUT',
             body: JSON.stringify({ plantID, startDate, dailySunlight, waterFrequency, fertilizerFrequency }),
             headers: { 'Content-Type': 'application/json' }
-        });
+        })
 
         if (response.ok) {
             loadGrowths();
@@ -64,7 +65,7 @@ function Growths() {
         } else {
             console.error('Failed to update growth entry');
         }
-    };
+    }
 
 
     const deleteGrowth = async (growthID) =>{
@@ -74,7 +75,7 @@ function Growths() {
         } else{
             console.error(`Failed to delete Growth with growthID = ${growthID}, status code = ${response.status}`);
         }
-    };
+    }
 
 
 
@@ -101,7 +102,7 @@ function Growths() {
                 <Buttons key={growth.id} onEditClick={()=> editGrowth(growth.growthID)} onDeleteClick={()=> deleteGrowth(growth.growthID)} />
             ]
         }
-    });
+    })
 
 
     const loadGrowths = async ()=>{
@@ -115,11 +116,11 @@ function Growths() {
     })
 
     const resetForm = () =>{
-        setPlantID("")
-        setStartDate("")
-        setDailySunlight("")
-        setWaterFreq("")
-        setFertilizerFrequency("")
+        setPlantID("");
+        setStartDate("");
+        setDailySunlight("");
+        setWaterFrequency("");
+        setFertilizerFrequency("");
     }
 
     const submitHandler = async(e) =>{
@@ -142,7 +143,7 @@ function Growths() {
                 <Table theadData={theadData} tbodyData={tbodyData} customClass={customClass} />
             </div>
             <section >
-                <h3>{edit ? "" : "Create New Entry"}</h3>
+                <h3>{edit ? "Edit Growth" : "Create New Entry"}</h3>
                 <article>
                     <h5>{edit ? "" : "Which plant is this?"}</h5>
                     <form onSubmit={submitHandler}>
@@ -164,7 +165,7 @@ function Growths() {
                             </p>
                             <p>
                                 <label htmlFor="waterFreq">Water Frequency (Days) </label>
-                                <input type="number" name="waterFreq" id="waterFreq" value={waterFrequency} onChange={(e)=> setWaterFreq(e.target.value)}/> 
+                                <input type="number" name="waterFreq" id="waterFreq" value={waterFrequency} onChange={(e)=> setWaterFrequency(e.target.value)}/> 
                             </p>
                             <p>
                                 <label htmlFor="fertFreq">Fertilizer Frequency (Days) </label>

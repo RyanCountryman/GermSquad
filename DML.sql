@@ -152,7 +152,6 @@ UPDATE Productions SET
 	startDate = :startDateInput, 
 	endProduction = :endProductionInput, 
 	waterFrequency = :waterFrequencyInput, 
-	waterAmount = :waterAmountInput, 
 	fertilizerFrequency = :fertilizerFrequencyInput, 
 	yield = :yieldInput
 WHERE productionID = :productionIDInput;

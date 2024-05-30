@@ -33,6 +33,7 @@ function Seedlings() {
 
 
     const editSeedling = async (seedlingID) => {
+        resetForm();
         if (edit){
              setEdit(false)
         } else{
