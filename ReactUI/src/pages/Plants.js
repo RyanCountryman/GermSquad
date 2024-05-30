@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
+import URL from '../config';
 
 
 
@@ -11,24 +12,18 @@ function Plants() {
     const [plantType, setPlantType] = useState("");
     const [plantName, setPlantName] = useState("");
     const [seasonComplete, setSeasonComplete] = useState("0")
+    const [plantSelection, setPlantSelection] = useState("")
     
 
     const addPlant = async (e) =>{
-        //e.preventDefault();
-        //const form = e.target;
-        //const formData = new FormData(form);
-
-        //const plantType = formData.get('plantType');
-        //const plantName = formData.get('plantName');
-
-        //Ensure no duplicate plantTypes are being submitted to backend
+         //Ensure no duplicate plantTypes are being submitted to backend
         if((plantType && plantName) || (!plantType && !plantName)){
             alert('Please select a plantType from the drop down or enter a new plant');
             return;
         }
 
         //Send formData to endpoint to create new plant
-        const response = await fetch('http://localhost:8500/CreatePlant', {
+        const response = await fetch(`${URL}/CreatePlant`, {
             method: 'POST',
             body: JSON.stringify({ plantType, plantName, seasonComplete}),
             headers: {'Content-Type': 'application/json'}
@@ -42,22 +37,29 @@ function Plants() {
         }
     };
 
+    //GET Plant attribute values and store for edit
     const editPlant = async (plantID) => {
-        const response = await fetch(`http://localhost:8500/Plants/${plantID}`);
-        if (response.ok) {
-            const plant = await response.json();
-            //setPlantType(plant.plantType);
-            setPlantName(plant.plantName);
-            setSeasonComplete(plant.seasonComplete);
-            setEdit(true);
-            setEditPlantID(plantID);
-        } else {
-            console.error(`Failed to fetch Plant with plantID = ${plantID}, status code = ${response.status}`);
+        resetForm();
+        if (edit){
+             setEdit(false);
+
+        } else{
+            const response = await fetch(`${URL}/Plants/${plantID}`);
+            if (response.ok) {
+                const plant = await response.json();
+                setPlantName(plant.plantName);
+                setSeasonComplete(plant.seasonComplete);
+                setEdit(true);
+                setEditPlantID(plantID);
+            } else {
+                console.error(`Failed to fetch Plant with plantID = ${plantID}, status code = ${response.status}`);
+            }
         }
     };
 
+    //Update selected ID with changed values in form
     const updatePlant = async () =>{
-        const response = await fetch(`http://localhost:8500/EditPlant/${editPlantID}`, {
+        const response = await fetch(`${URL}/EditPlant/${editPlantID}`, {
             method: 'PUT',
             body: JSON.stringify({ plantType, plantName, seasonComplete }),
             headers: { 'Content-Type': 'application/json' }
@@ -74,7 +76,7 @@ function Plants() {
     };
 
     const deletePlant = async (plantID) =>{
-        const response = await fetch(`http://localhost:8500/DeletePlant/${plantID}`, { method: 'DELETE' });
+        const response = await fetch(`${URL}/DeletePlant/${plantID}`, { method: 'DELETE' });
         if(response.ok){
             loadPlants();
         } else{
@@ -83,7 +85,7 @@ function Plants() {
     };
     
     const loadPlants = async ()=>{
-        const response = await fetch('http://localhost:8500/Plants'); //TODO Change Fetch url
+        const response = await fetch(`${URL}/Plants`); //TODO Change Fetch url
         const plants = await response.json();
         setPlants(plants);
     }
@@ -167,7 +169,7 @@ function Plants() {
                                     <label htmlFor="seasonNotComplete">No</label>
                                 </div>
                                 <p>
-                                    <button class="btn btn-submit" type="submit">{edit ? "Update" : "Submit"}</button>
+                                    <button className="btn btn-submit" type="submit">{edit ? "Update" : "Submit"}</button>
                                 </p>
                             </fieldset>
                         </form>

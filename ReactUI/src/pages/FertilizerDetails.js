@@ -8,20 +8,30 @@ function FertilizerDetails() {
     const customClass = "plantTable"
     const theadData = ["FertilizerDetailsID", "FertilizerID", "GrowthID", "ProductionID", "Modify"];
 
-    const tbodyData = [
-        {
-            id: "1",
-            items: ["1","2", "1", "1", <Buttons key={fertilizerDetails.id} />],
-        },
-        {
-            id: "2",
-            items: ["2","3", "2", "2", <Buttons key={fertilizerDetails.id} />],
-        },
-        {
-            id: "3",
-            items: ["3","1", "3", "3", <Buttons key={fertilizerDetails.id} />]
+
+    const tbodyData = fertilizerDetails.map(fertilizerDetail => {  
+        return {
+            id: fertilizerDetail.detailsID,
+            items: [
+                fertilizerDetail.detailsID, //TODO ADD IN CONDITIONALS IF NEEDED FOR DISPLAY
+                fertilizerDetail.fertilizerID,
+                fertilizerDetail.growthsID,
+                fertilizerDetail.productionsID,
+                <Buttons key={fertilizerDetail.id} />
+            ]
         }
-    ];
+    });
+
+    const loadFertilzerDetails = async ()=>{
+        const response = await fetch('http://localhost:8500/FertilizerDetails'); //TODO Change Fetch url
+        const fertilizerDetails = await response.json();
+        setFetilizerDetails(fertilizerDetails);
+    }
+
+    useEffect(() => {
+        loadFertilzerDetails();
+    })
+
     return (
         <body>
         <header>

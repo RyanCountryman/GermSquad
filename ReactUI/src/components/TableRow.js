@@ -8,8 +8,8 @@ import React from "react";
 const TableRow = ({ data }) => {
     return (
         <tr>
-            {data.map((item) => {
-                return <td key={item}>{item}</td>;
+            {data.map((item, index) => {
+                return <td key={`${item}-${index}`}>{item} </td>;
             })}
         </tr>
     );

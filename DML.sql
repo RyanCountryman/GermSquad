@@ -27,26 +27,38 @@ SELECT
     Growths.dailySunlight,
     Growths.waterFrequency,
     Growths.fertilizerFrequency,
-    Fertilizers.fertilizerType
+    Fertilizers.fertilizerType,
+    Growinglocations.isGround,
+    Growinglocations.isContainer,
+	Growinglocations.bedType,
+    Growinglocations.containerType
 FROM Growths
 LEFT JOIN FertilizerDetails ON Growths.growthID = FertilizerDetails.growthsID
 LEFT JOIN Fertilizers ON FertilizerDetails.fertilizerID = Fertilizers.fertilizerID
+LEFT JOIN LocationDetails ON Growths.growthID = LocationDetails.growthsID
+LEFT JOIN GrowingLocations ON LocationDetails.growingLocationsID = GrowingLocations.locationID
 LEFT JOIN Plants ON Growths.plantID = Plants.plantID;
 
 -- Displays Current entries on the Productions Page 
 SELECT 
 	Productions.productionID,
+    Productions.plantID,
 	Plants.plantType,
     Productions.startDate,
     Productions.endProduction,
     Productions.waterFrequency,
-    Productions.waterAmount,
     Productions.yield,
     Productions.fertilizerFrequency,
-    Fertilizers.fertilizerType
+    Fertilizers.fertilizerType,
+	Growinglocations.isGround,
+    Growinglocations.isContainer,
+	Growinglocations.bedType,
+    Growinglocations.containerType
 FROM Productions
 LEFT JOIN FertilizerDetails ON Productions.productionID = FertilizerDetails.productionsID
 LEFT JOIN Fertilizers ON FertilizerDetails.fertilizerID = Fertilizers.fertilizerID
+LEFT JOIN LocationDetails ON Productions.productionID = LocationDetails.productionsID
+LEFT JOIN GrowingLocations ON LocationDetails.growingLocationsID = GrowingLocations.locationID
 LEFT JOIN Plants ON Productions.plantID = Plants.plantID;
 
 -- Display Current entries while on GrowingLocations page
@@ -54,6 +66,9 @@ SELECT * FROM GrowingLocations;
 
 -- Display FertilizerDetails
 SELECT * FROM FertilizerDetails;
+
+-- Display LocationDetails
+SELECT * FROM LocationDetails
 
 
 
@@ -85,13 +100,12 @@ INSERT INTO Plants (plantType, seasonComplete, waterSummation)
 VALUES (:plantTypeInput, :seasonCompleteInput, :waterSummationInput);
 
 -- Create a new Seedling
-INSERT INTO Seedlings (plantID, datePlanted, aveTemperature, waterFrequency, waterAmount, germinationTime) 
-VALUES (:plantID_from_dropdown_Input, :datePlantedInput, :aveTemperatureInput, :waterFrequencyInput, :waterAmountInput, :germinationTimeInput);
+INSERT INTO Seedlings (plantID, datePlanted, aveTemperature, waterFrequency, germinationTime) 
+VALUES (:plantID_from_dropdown_Input, :datePlantedInput, :aveTemperatureInput, :waterFrequencyInput, :germinationTimeInput);
 
 -- Create a new Growth
-
-INSERT INTO Growths (plantID, startDate, dailySunlight, waterFrequency, waterAmount, fertilizerFrequency)
-VALUES (:plantID_from_dropdown_Input, :startDateInput, :dailySunlightInput, :waterFrequencyInput, :waterAmountInput, :fertilizerFrequencyInput);
+INSERT INTO Growths (plantID, startDate, dailySunlight, waterFrequency,  fertilizerFrequency)
+VALUES (:plantID_from_dropdown_Input, :startDateInput, :dailySunlightInput, :waterFrequencyInput, :fertilizerFrequencyInput);
 
 -- Create a new Production
 INSERT INTO Productions (plantID, startDate, endProduction, waterFrequency, waterAmount, fertilizerFrequency, yield)
@@ -122,7 +136,6 @@ UPDATE Seedlings SET
 	datePlanted = :datePlantedInput,
 	aveTemperature = :aveTemperatureInput, 
 	waterFrequency = :waterFrequencyInput, 
-	waterAmount = :waterAmountInput, 
 	germinationTime = :germinationTimeInput
 WHERE seedlingID = :seedlingIDInput;
 
@@ -130,8 +143,7 @@ WHERE seedlingID = :seedlingIDInput;
 UPDATE Growths SET
 	startDate = :startDateInput,
 	dailySunlight = :dailySunlightInput, 
-	waterFrequency = :waterFrequencyInput, 
-	waterAmount = :waterAmountInput, 
+	waterFrequency = :waterFrequencyInput,
 	fertilizerFrequency = :fertilizerFrequencyInput
 WHERE growthID = :growthIDInput;
 
@@ -140,7 +152,6 @@ UPDATE Productions SET
 	startDate = :startDateInput, 
 	endProduction = :endProductionInput, 
 	waterFrequency = :waterFrequencyInput, 
-	waterAmount = :waterAmountInput, 
 	fertilizerFrequency = :fertilizerFrequencyInput, 
 	yield = :yieldInput
 WHERE productionID = :productionIDInput;
