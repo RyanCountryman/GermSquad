@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
 import URL from '../config';
+import PlantTypesDropDown from '../components/PlantsTypeDropdown';
 
 
 
@@ -12,17 +13,15 @@ function Plants() {
     const [plantType, setPlantType] = useState("");
     const [plantName, setPlantName] = useState("");
     const [seasonComplete, setSeasonComplete] = useState("0")
-    const [plantSelection, setPlantSelection] = useState("")
     
 
+    //Send POST request to create new Plants Entry
     const addPlant = async (e) =>{
-         //Ensure no duplicate plantTypes are being submitted to backend
         if((plantType && plantName) || (!plantType && !plantName)){
-            alert('Please select a plantType from the drop down or enter a new plant');
+            alert('Please either select an existing plant from the drop down or enter a new plant!');
             return;
         }
 
-        //Send formData to endpoint to create new plant
         const response = await fetch(`${URL}/CreatePlant`, {
             method: 'POST',
             body: JSON.stringify({ plantType, plantName, seasonComplete}),
@@ -32,12 +31,14 @@ function Plants() {
         if(response.ok) {
             loadPlants();
             resetForm();
+            alert("Plant Entry Added!");
         }else{
             console.error('Failed to create new plant entry');
         }
     };
 
-    //GET Plant attribute values and store for edit
+
+    //Send GET request to obtain current information on selected entry and enter edit mode
     const editPlant = async (plantID) => {
         resetForm();
         if (edit){
@@ -57,7 +58,8 @@ function Plants() {
         }
     };
 
-    //Update selected ID with changed values in form
+
+    //Send PUT request to update selected entry
     const updatePlant = async () =>{
         const response = await fetch(`${URL}/EditPlant/${editPlantID}`, {
             method: 'PUT',
@@ -70,36 +72,48 @@ function Plants() {
             resetForm();
             setEdit(false);
             setEditPlantID(null);
+            alert("Plant Entry Updated!");
         } else {
             console.error('Failed to update plant entry');
         }
     };
 
+
+    //Send DELETE request on selected entry
     const deletePlant = async (plantID) =>{
         const response = await fetch(`${URL}/DeletePlant/${plantID}`, { method: 'DELETE' });
         if(response.ok){
             loadPlants();
+            alert("Plant Entry Removed!");
         } else{
             console.error(`Failed to delete Plant with plantID = ${plantID}, status code = ${response.status}`);
         }
     };
     
+
+    //Send GET request for all entries of Plants Entity
     const loadPlants = async ()=>{
-        const response = await fetch(`${URL}/Plants`); //TODO Change Fetch url
+        const response = await fetch(`${URL}/Plants`);
         const plants = await response.json();
         setPlants(plants);
     }
 
+
+    //Load Table at first access and after each update
+    useEffect(() => {
+        loadPlants();
+    }, []);
+
+    
+    //Reset State variables contained in form
     const resetForm = () =>{
         setPlantType("");
         setPlantName("");
         setSeasonComplete("0");
     }
 
-    useEffect(() => {
-        loadPlants();
-    }, []);
-    
+
+    //Navigate form submit to needed operation
     const submitHandler = async(e) =>{
         e.preventDefault();
         if(edit){
@@ -110,7 +124,7 @@ function Plants() {
     }
 
 
-    //Set up table information
+    //Fill Table Component
     const customClass = "plantTable"
     const theadData = ["Plant ID", "Plant Name", "Season Completed", "Modify"];
 
@@ -141,22 +155,13 @@ function Plants() {
                         <form onSubmit={submitHandler}>
                             <fieldset>
                                 <legend>{edit ?  "Edit Entry" : "New Plant"}</legend>
+                                <h6>Select from existing plants or add a new plant!</h6>
                                 <p>
-                                    <label htmlFor="plantType">Plant Type </label>
-                                    <select name = "plantType" id="plantType" value={plantType} onChange={(e)=> setPlantType(e.target.value)}>
-                                        <option value=""></option>
-                                        <option value="Tomato">Tomato</option>
-                                        <option value="Pepper">Pepper</option>
-                                        <option value="Lettuce">Lettuce</option>
-                                        <option value="Cucumber">Cucumber</option>
-                                        <option value="Squash">Squash</option>
-                                        <option value="Oregano">Oregano</option>
-                                        <option value="Basil">Basil</option>
-                                        <option value="Potato">Potato</option>
-                                    </select>
+                                    <label htmlFor="plantType">Existing Plants</label>
+                                    <PlantTypesDropDown selectedPlantType={plantType} setSelectedPlantType={setPlantType}></PlantTypesDropDown>
                                 </p>
                                 <div>
-                                    <label htmlFor="plantName">Enter Plant Name </label>
+                                    <label htmlFor="plantName">Enter New Plant</label>
                                     <input type="text" name="plantName" id="plantName" value={plantName} onChange={(e)=> setPlantName(e.target.value)}/>
                                 </div>
                                 <div>

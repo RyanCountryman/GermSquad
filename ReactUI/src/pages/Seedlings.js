@@ -16,7 +16,14 @@ function Seedlings() {
     const [germinationTime, setGerminationTime] = useState("")    
 
 
+    //Send POST request to create new Seedlings Entry
     const addSeedling = async (e) =>{
+        if(!plantID || !datePlanted){
+            alert("Plant Type and a Date Planted are required to create a Seedling");
+            resetForm();
+            return;
+        }
+
         const response = await fetch(`${URL}/CreateSeedling`, {
             method: 'POST',
             body: JSON.stringify({ plantID, datePlanted, aveTemperature, waterFrequency, germinationTime}),
@@ -24,6 +31,7 @@ function Seedlings() {
         });
 
         if(response.ok) {
+            alert("New Seedling Added!");
             loadSeedlings();
             resetForm();
         }else{
@@ -32,6 +40,7 @@ function Seedlings() {
     };
 
 
+    //Send GET request to obtain current information on selected entry and enter edit mode
     const editSeedling = async (seedlingID) => {
         resetForm();
         if (edit){
@@ -52,6 +61,8 @@ function Seedlings() {
         }
     };
 
+
+    //Send PUT request to update selected entry
     const updateSeedling = async () =>{
         const response = await fetch(`${URL}/EditSeedling/${editSeedlingID}`, {
             method: 'PUT',
@@ -64,14 +75,18 @@ function Seedlings() {
             resetForm();
             setEdit(false);
             setEditSeedlingID(null);
+            alert("Seedling Entry Updated!");
         } else {
             console.error('Failed to update seedling entry');
         }
     };
 
+
+    //Send DELETE request on selected entry
     const deleteSeedling = async (seedlingID) =>{
         const response = await fetch(`${URL}/DeleteSeedling/${seedlingID}`, { method: 'DELETE' });
         if(response.ok){
+            alert("Seedling entry removed!");
             loadSeedlings();
         } else{
             console.error(`Failed to delete Seedling with seedlingID = ${seedlingID}, status code = ${response.status}`);
@@ -79,10 +94,44 @@ function Seedlings() {
     };
 
 
+    //Send GET request for all entries of Seedlings Entity
+    const loadSeedlings = async ()=>{
+        const response = await fetch(`${URL}/Seedlings`);
+        const seedlings = await response.json();
+        setSeedlings(seedlings);
+    }
+
+
+    //Load Table at first access and after each update
+    useEffect(() => {
+        loadSeedlings();
+    })
+
+
+    //Reset State variables contained in form
+    const resetForm = () =>{
+        setPlantID("")
+        setDatePlanted("")
+        setAveTemperature("")
+        setWaterFreq("")
+        setGerminationTime("")
+    }
+
+
+    //Navigate form submit to needed operation
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+        if(edit){
+            updateSeedling();
+        }else{
+            addSeedling();
+        }
+    }
+
 
     //Filling Seedlings Table
     const customClass = "plantTable"
-    const theadData = ["Seedling ID", "Plant ID", "Plant Name", "Date Planted", "Soil Temperature", "Water Frequency", "Days to germinate", "Modify"];
+    const theadData = ["Seedling ID", "Plant ID", "Plant Name", "Date Planted", "Soil Temperature (F)", "Water Frequency", "Days to germinate", "Modify"];
 
     const tbodyData = seedlings.map(seedling => {
         const datePlanted = new Date(seedling.datePlanted);
@@ -93,41 +142,13 @@ function Seedlings() {
                 seedling.plantID,
                 seedling.plantType,
                 datePlanted.toLocaleDateString(),
-                seedling.aveTemperature,
-                `Every ${seedling.waterFrequency} Days`,
-                seedling.germinationTime,
+                seedling.aveTemperature ? seedling.aveTemperature : "",
+                seedling.waterFrequency ? `Every ${seedling.waterFrequency} Days` : "",
+                seedling.germinationTime ? seedling.germinationTime : "",
                 <Buttons key={seedling.ID} onEditClick={()=> editSeedling(seedling.seedlingID)} onDeleteClick={()=> deleteSeedling(seedling.seedlingID)}  />
             ]
         }
     });
-
-    const loadSeedlings = async ()=>{
-        const response = await fetch(`${URL}/Seedlings`); //TODO Change Fetch url
-        const seedlings = await response.json();
-        setSeedlings(seedlings);
-
-    }
-
-    const resetForm = () =>{
-        setPlantID("")
-        setDatePlanted("")
-        setAveTemperature("")
-        setWaterFreq("")
-        setGerminationTime("")
-    }
-
-    useEffect(() => {
-        loadSeedlings();
-    })
-
-    const submitHandler = async(e) =>{
-        e.preventDefault();
-        if(edit){
-            updateSeedling();
-        }else{
-            addSeedling();
-        }
-    }
 
 
     return (

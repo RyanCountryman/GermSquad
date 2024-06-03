@@ -1,5 +1,5 @@
 -- CS340 Group 49: Anthony Parsons and Ryan Countryman
--- Project: GERMSQUAD Part3 Draft
+-- Project: GERMSQUAD
 
 -- [ DISPLAYS ]
 
@@ -68,7 +68,7 @@ SELECT * FROM GrowingLocations;
 SELECT * FROM FertilizerDetails;
 
 -- Display LocationDetails
-SELECT * FROM LocationDetails
+SELECT * FROM LocationDetails;
 
 
 
@@ -77,8 +77,22 @@ SELECT * FROM LocationDetails
 -- Display Current entries while on Fertilizers page and populate fertilizer drop down
 SELECT * FROM Fertilizers;
 
--- Query to populate drop down list during creation of plant 
-SELECT plantType FROM Plants;
+-- Query to populate plants drop down list during creation of plant 
+SELECT DISTINCT plantType FROM Plants;
+
+-- Query to populate growths drop down list during creation of intersection tables
+SELECT growthID, Plants.plantType FROM Growths
+LEFT JOIN Plants ON Growths.plantID = Plants.plantID
+
+-- Query to populate productions drop down list during creation of intersection tables
+SELECT productionID, Plants.plantType FROM Productions
+LEFT JOIN Plants ON Productions.plantID = Plants.plantID
+
+-- Query to populate fertilizers drop down list during creation of intersection tables
+SELECT fertilizerID, fertilizerType FROM Fertilizers;
+
+-- Query to populate GrowingLocations drop down list during creation of intersection tables
+SELECT locationID, isGround, bedType, containerType FROM growingLocations
 
 -- Query to populate drop down list for plants growing in the ground
 SELECT bedType FROM GrowingLocations
@@ -88,8 +102,23 @@ SELECT bedType FROM GrowingLocations
 SELECT containerType FROM GrowingLocations
 	WHERE isGround = 0;
     
--- Find specific entry by id for Puts
+-- Find specific plant entry by id for Puts
 Select * From Plants WHERE plantID = :plantID;
+
+-- Find specific seedling entry by id for Puts
+Select * From Seedlings WHERE seedlingID = :seedlingID;
+
+-- Find specific growth entry by id for Puts
+Select * From Growths WHERE growthID = :growthID;
+
+-- Find specific production entry by id for Puts
+Select * From Productions WHERE productionID = :productionID;
+
+-- Find specific fertilizer entry by id for Puts
+Select * From Fertilizers WHERE fertilizerID = :fertilizerID;
+
+-- Find specific growth entry by id for Puts
+Select * From GrowingLocations WHERE locationID = :locationID;
 
 
 
@@ -119,7 +148,13 @@ VALUES (:isGroundInput, :isContainerInput, :containerTypeInput, :bedTypeInput);
 INSERT INTO Fertilizers (fertilizerType, nitrogen, phosphorous, potassium)
 VALUES (:fertilizerTypeInput, :nitrogenInput, :phosphorousInput, :potassiumInput);
 
+-- Create a new FertilizerDetails
+INSERT INTO FertilizerDetails (fertilizerID, growthsID, productionsID)
+VALUES (:fertilizerID, :growthsID, productionsID)
 
+-- Create a new LocationDetails
+INSERT INTO LocationDetails (locationID, growthsID, productionsID)
+VALUES (:locationID, :growthsID, productionsID)
 
 
 
@@ -127,52 +162,62 @@ VALUES (:fertilizerTypeInput, :nitrogenInput, :phosphorousInput, :potassiumInput
 
 -- Update a Plants Entry
 UPDATE Plants SET
-	plantType = :plantTypeInput, 
-	seasonComplete = :seasonCompleteInput
-WHERE plantID = :plantIDInput;
+		plantType = coalesce(:plantType,plantType), 
+		seasonComplete = coalesce(:seasonComplete,seasonComplete)
+WHERE plantID = ?
 
 -- Update a Seedlings Entry
 UPDATE Seedlings SET
-	datePlanted = :datePlantedInput,
-	aveTemperature = :aveTemperatureInput, 
-	waterFrequency = :waterFrequencyInput, 
-	germinationTime = :germinationTimeInput
-WHERE seedlingID = :seedlingIDInput;
+		datePlanted = coalesce(:datePlanted,datePlanted),
+		aveTemperature = coalesce(:aveTemperature,aveTemperature), 
+		waterFrequency = coalesce(:waterFrequency,waterFrequency),  
+		germinationTime = coalesce(:germinationTime,germinationTime)
+WHERE seedlingID = ?
 
 -- Update a Growths Entry
 UPDATE Growths SET
-	startDate = :startDateInput,
-	dailySunlight = :dailySunlightInput, 
-	waterFrequency = :waterFrequencyInput,
-	fertilizerFrequency = :fertilizerFrequencyInput
-WHERE growthID = :growthIDInput;
+		startDate = coalesce(:startDate,startDate),
+		dailySunlight = coalesce(:dailySunlight,dailySunlight), 
+		waterFrequency = coalesce(:waterFrequency,waterFrequency),  
+		fertilizerFrequency = coalesce(:fertilizerFrequency,fertilizerFrequency)
+WHERE growthID = ?
 
 -- Update a Productions Entry
 UPDATE Productions SET
-	startDate = :startDateInput, 
-	endProduction = :endProductionInput, 
-	waterFrequency = :waterFrequencyInput, 
-	fertilizerFrequency = :fertilizerFrequencyInput, 
-	yield = :yieldInput
-WHERE productionID = :productionIDInput;
+		startDate = coalesce(:startDate,startDate), 
+		endProduction = coalesce(:endProduction,endProduction), 
+		waterFrequency = coalesce(:waterFrequency,waterFrequency), 
+		fertilizerFrequency = coalesce(:fertilizerFrequency,fertilizerFrequency), 
+		yield = coalesce(:yield,yield)
+WHERE productionID = ?
 
 -- Update a GrowingLocations Entry
 UPDATE GrowingLocations SET
 	isGround = :isGroundInput, 
-	isContainer = :isContainerInput, 
-	containerType = :containerTypeInput, 
-	bedType = :bedTypeInput
+	isContainer = :isContainerInput,
+    bedType = :bedTypeInput,
+	containerType = :containerTypeInput
 WHERE locationID = :locationIDInput;
 
 -- Update a Fertilizers Entry
 UPDATE Fertilizers SET
-	fertilizerType = :fertilizerTypeInput,
-	nitrogen = :nitrogenInput,
-	phosphorous = :phosphorousInput,
-	potassium = :potassiumInput
-WHERE fertilizerID = :fertilizerIDInput;
+		fertilizerType = coalesce(:fertilizerType,fertilizerType),
+		nitrogen = coalesce(:nitrogen,nitrogen),
+		phosphorous = coalesce(:phosphorous,phosphorous),
+		potassium = coalesce(:potassium,potassium)
+WHERE fertilizerID = ?
 
+-- Update a GrowingLocationDetails Entry
+UPDATE LocationDetails SET
+		growthsID = :growthsID, 
+		productionsID = :productionsID 
+WHERE locationDetailsID = :locationDetailsID;
 
+-- Update a FertilizerDetails Entry
+UPDATE FertilizerDetails SET
+		growthsID = :growthsID, 
+		productionsID = :productionsID 
+WHERE detailsID = :detailsID;
 
 
 
@@ -195,3 +240,9 @@ DELETE FROM GrowingLocations WHERE locationID = :locationIDInput;
 
 -- Delete Fertilizers entry
 DELETE FROM Fertilizers WHERE fertilizerID = :fertilizerIDInput;
+
+-- Delete FertilizerDetails entry
+DELETE FROM FertilizerDetails WHERE detailsID = :detailsID
+
+-- Delete LocationDetails entry
+DELETE FROM LocationDetails WHERE locationDetailsID = :locationDetailsID

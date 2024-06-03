@@ -5,29 +5,24 @@ import URL from '../config'
 
 function GrowingLocations() {
     const [growingLocations, setGrowingLocations] = useState([]);
-    const [edit, setEdit] = useState(false)
-    const [editLocationID, setEditLocationID] = useState(null)
+    const [edit, setEdit] = useState(false);
+    const [editLocationID, setEditLocationID] = useState(null);
     const [isGround, setIsGround] = useState("0")
     const [isContainer, setIsContainer] = useState("0")
-    const [bedType, setBedType] = useState("")
-    const [containerType, setContainerType] = useState("")
-    const [formLocationType, setFormLocationType] = useState("")
-
-    const customClass = "plantTable"
-    const theadData = ["Location ID", "In Ground?", "In Container?", "Bed Type", "Container Type", "Modify"];
+    const [bedType, setBedType] = useState("");
+    const [containerType, setContainerType] = useState("");
+    const [formLocationType, setFormLocationType] = useState("");
 
 
+    //Send POST request to create new GrowingLocations Entry
     const addGrowingLocation = async (e) =>{
-        let isGroundLoc = 0
-        let isContainerLoc = 0
-        console.log(formLocationType)
-        if (formLocationType === "ground"){
-            isGroundLoc = 1
-            isContainerLoc = 0
-            console.log(`isGround: ${isGround} || isContainer: ${isContainer}`)
-        }else{
-            isGroundLoc = 0
-            isContainerLoc = 1
+        let isGroundLoc = (formLocationType === "ground") ? 1 : 0;
+        let isContainerLoc = (formLocationType === "container") ? 1 : 0;
+        
+        if((isGroundLoc === 0 && isContainerLoc ===0) || (!bedType && !containerType)){
+            alert("Please Select a location type and enter the respective type of growing location!");
+            resetForm();
+            return;
         }
         const response = await fetch(`${URL}/CreateGrowingLocation`, {
             method: 'POST',
@@ -36,6 +31,7 @@ function GrowingLocations() {
         });
 
         if(response.ok) {
+            alert("New GrowingLocation Added!");
             loadGrowingLocations();
             resetForm();
         }else{
@@ -43,52 +39,66 @@ function GrowingLocations() {
         }
     };        
 
-        //GET GrowingLocation attribute values and store for edit TODO:FIX STATE ISSUES
-        const editGrowingLocation = async (locationID) => {
-            /*resetForm();
-            if (edit){
-                 setEdit(false);
-    
-            } else{
-                const response = await fetch(`${URL}/GrowingLocations/${locationID}`);
-                if (response.ok) {
-                    const growingLocation = await response.json();
-                    setIsGround(growingLocation.isGround);
-                    setIsContainer(growingLocation.isContainer);
-                    isGround ? await setBedType(growingLocation.bedType) :  await setBedType(null);
-                    isContainer ? await setContainerType(growingLocation.containerType) : await setContainerType(null);
-                    setEdit(true);
-                    setEditLocationID(locationID);
-                } else {
-                    console.error(`Failed to fetch GrowingLocation with locationID = ${locationID}, status code = ${response.status}`);
-                }
-            //}*/
-        };
-    
-        //Update selected ID with changed values in form TODO:FIX STATE ISSUES
-        const updateGrowingLocation = async (isGroundLoc,isContainerLoc) =>{
-            /*
-            const response = await fetch(`${URL}/EditGrowingLocation/${editLocationID}`, {
-                method: 'PUT',
-                body: JSON.stringify({ isGroundLoc, isContainerLoc, bedType, containerType }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-    
+
+    //Send GET request to obtain current information on selected entry and enter edit mode
+    const editGrowingLocation = async (locationID) => {
+        resetForm();
+        if (edit){
+            setEdit(false);
+        } else{
+            const response = await fetch(`${URL}/GrowingLocations/${locationID}`);
             if (response.ok) {
-                loadGrowingLocations();
-                resetForm();
-                setEdit(false);
-                setEditLocationID(null);
+                const growingLocation = await response.json();
+                setIsGround(growingLocation.isGround);
+                setIsContainer(growingLocation.isContainer);
+                setBedType(growingLocation.bedType);
+                setContainerType(growingLocation.containerType);
+                setEdit(true);
+                setEditLocationID(locationID);
             } else {
-                console.error('Failed to update growingLocation entry');
+                console.error(`Failed to fetch GrowingLocation with locationID = ${locationID}, status code = ${response.status}`);
             }
-            */
-        };
+        }
+    };
+    
+
+    //Send PUT request to update selected entry
+    const updateGrowingLocation = async () =>{
+        let isGroundLoc = (formLocationType === 'ground')? 1 : 0;
+        let isContainerLoc = (formLocationType === 'container')? 1 : 0;
+
+        if((isGroundLoc === 0 && isContainerLoc === 0)){
+            alert("Please Select a location type and enter the respective type of growing location!");
+            resetForm();
+            return;
+        }
+
+        const response = await fetch(`${URL}/EditGrowingLocation/${editLocationID}`, {
+            method: 'PUT',
+            body: JSON.stringify({ isGroundLoc, isContainerLoc, bedType, containerType }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+    
+        if (response.ok) {
+            loadGrowingLocations();
+            resetForm();
+            setEdit(false);
+            setEditLocationID(null);
+            alert("GrowingLocation Entry Updated!");
+        } else {
+            console.error('Failed to update growingLocation entry');
+            resetForm();
+            setEdit(false);
+        }
+        
+    };
 
 
+    //Send DELETE request on selected entry
     const deleteGrowingLocation = async (locationID) =>{
         const response = await fetch(`${URL}/DeleteGrowingLocation/${locationID}`, { method: 'DELETE' });
         if(response.ok){
+            alert("GrowingLocation entry removed!");
             loadGrowingLocations();
         } else{
             console.error(`Failed to delete GrowingLocation with locationID = ${locationID}, status code = ${response.status}`);
@@ -96,6 +106,45 @@ function GrowingLocations() {
     };
 
 
+    //Send GET request for all entries of GrowingLocations Entity
+    const loadGrowingLocations = async ()=>{
+        const response = await fetch(`${URL}/GrowingLocations`); 
+        const growingLocations = await response.json();
+        setGrowingLocations(growingLocations);
+    }
+
+
+    //Load Table at first access and after each update
+    useEffect(() => {
+        loadGrowingLocations();
+    }, []);
+
+
+    //Reset State variables contained in form
+    const resetForm = () =>{
+        setIsGround("0");
+        setIsContainer("0");
+        setBedType("");
+        setContainerType("");
+        setFormLocationType("");
+    }
+
+
+    //Navigate form submit to needed operation
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+        if(edit){
+            updateGrowingLocation()
+        }else{
+            addGrowingLocation()
+        }
+    }
+
+
+    //Fill Table Component
+    const customClass = "plantTable"
+    const theadData = ["Location ID", "In Ground?", "In Container?", "Bed Type", "Container Type", "Modify"];
+    
     const tbodyData = growingLocations.map(growingLocation => {  
         return {
             id: growingLocation.locationID,
@@ -109,34 +158,6 @@ function GrowingLocations() {
             ]
         }
     });
-
-
-    const loadGrowingLocations = async ()=>{
-        const response = await fetch(`${URL}/GrowingLocations`); //TODO Change Fetch url
-        const growingLocations = await response.json();
-        setGrowingLocations(growingLocations);
-    }
-
-    const resetForm = () =>{
-        setIsGround("0");
-        setIsContainer("0");
-        setBedType("");
-        setContainerType("");
-        setFormLocationType("")
-    }
-
-    useEffect(() => {
-        loadGrowingLocations();
-    }, []);
-
-    const submitHandler = async(e) =>{
-        e.preventDefault();
-        if(edit){
-            updateGrowingLocation()
-        }else{
-            addGrowingLocation()
-        }
-    }
 
 
     return (

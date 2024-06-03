@@ -23,7 +23,7 @@ app.use(express.json());
 //--------------------------------------PLANTS OPERATIONS-------------------------------------------
 
 
-//Read full plants table TODO:CHECK STATUS CODES
+//Read full plants table
 app.get('/Plants',(req,res) => {
     db.query('SELECT * FROM Plants', (error, results) => {
         if(error){
@@ -35,23 +35,22 @@ app.get('/Plants',(req,res) => {
     });
 });
 
+
 //Obtain specific plant entry by ID
 app.get('/Plants/:plantID', (req,res) =>{
-    console.log(req.params.plantID);
     const plantID = req.params.plantID;
     db.query(`Select * From Plants WHERE plantID = ?`,[plantID], (error,results) =>{
         if(error){
-            console.log(`Error obtaing plant with ID: ${plantID}`);
+            console.log(`Error obtaining plant with ID: ${plantID}`);
             res.status(500).send('Unable to find plant')
             return;
         }
-        console.log(results);
         res.json(results);
     });
 });
 
 
-//Creation of plant entry TODO: CHECK STATUS CODES
+//Creation of plant entry
 app.post('/CreatePlant', (req,res) => {
     let { plantType, plantName, seasonComplete } = req.body;
     if(!plantType) plantType = plantName;
@@ -68,6 +67,8 @@ app.post('/CreatePlant', (req,res) => {
     });
 });
 
+
+//Edit plant entry
 app.put('/EditPlant/:editPlantID', (req,res) =>{
     const plantID = req.params.editPlantID;
     let { plantType, plantName,seasonComplete } = req.body;
@@ -89,7 +90,8 @@ app.put('/EditPlant/:editPlantID', (req,res) =>{
     });
 });
 
-//Deletion of plant entry by plantID TODO: CHECK STATUS CODES
+
+//Deletion of plant entry by plantID
 app.delete('/DeletePlant/:plantID', (req,res) => {
     const plantID = req.params.plantID;
     db.query('DELETE FROM Plants WHERE plantID = ?', [plantID], (error, results) =>{
@@ -103,6 +105,7 @@ app.delete('/DeletePlant/:plantID', (req,res) => {
 });
 
 
+//Plants Drop Down for FK 
 app.get('/PlantsDrop',(req,res) => {
     db.query('SELECT plantID, plantType FROM plants', (error ,results) => {
         if(error){
@@ -115,9 +118,21 @@ app.get('/PlantsDrop',(req,res) => {
 });
 
 
+//Plant Name Drop Down for Creation of Plants
+app.get('/PlantsTypeDrop',(req,res) => {
+    db.query('SELECT DISTINCT plantType FROM plants', (error ,results) => {
+        if(error){
+            console.error('Error running dropdown population query:', error);
+            res.status(500).send('Error fetching plants for dropdown');
+            return;
+        }
+        res.json(results);
+    });
+});
+
 //--------------------------------------SEEDLINGS OPERATIONS-------------------------------------------
 
-
+//GET all seedling entries
 app.get('/Seedlings',(req,res) => {
     db.query(`
         SELECT 
@@ -136,29 +151,32 @@ app.get('/Seedlings',(req,res) => {
             res.status(500).send('Error fetching seedling data');
             return;
         }
-        //console.log(Object.keys(results[0]));
         res.json(results);
     });
 });
+
 
 //Get Seedling By ID
 app.get('/Seedlings/:seedlingID', (req,res) =>{
     const seedlingID = req.params.seedlingID;
     db.query(`Select * From Seedlings WHERE seedlingID = ?`,[seedlingID], (error,results) =>{
         if(error){
-            console.log(`Error obtaing seedling with ID: ${seedlingID}`);
+            console.log(`Error obtaining seedling with ID: ${seedlingID}`);
             res.status(500).send('Unable to find seedling')
             return;
         }
-        console.log(results);
         res.json(results);
     });
 });
 
+
 //Create New Seedling
 app.post('/CreateSeedling', (req,res) => {
     let { plantID, datePlanted, aveTemperature, waterFrequency, germinationTime } = req.body;
-    console.log(`plantID:${plantID} datePlant:${datePlanted} aveTemp:${aveTemperature}  waterFreq:${waterFrequency}  germTime:${germinationTime}  `)
+    aveTemperature = aveTemperature ? aveTemperature : null;
+    waterFrequency = waterFrequency ? waterFrequency : null;
+    germinationTime = germinationTime ? germinationTime : null;
+
     const query = `
                 INSERT INTO Seedlings (
                     plantID,
@@ -230,10 +248,10 @@ app.get('/Growths',(req,res) => {
             Growths.waterFrequency,
             Growths.fertilizerFrequency,
             Fertilizers.fertilizerType,
-            Growinglocations.isGround,
-            Growinglocations.isContainer,
-            Growinglocations.bedType,
-            Growinglocations.containerType
+            GrowingLocations.isGround,
+            GrowingLocations.isContainer,
+            GrowingLocations.bedType,
+            GrowingLocations.containerType
         FROM Growths
         LEFT JOIN FertilizerDetails ON Growths.growthID = FertilizerDetails.growthsID
         LEFT JOIN Fertilizers ON FertilizerDetails.fertilizerID = Fertilizers.fertilizerID
@@ -246,28 +264,32 @@ app.get('/Growths',(req,res) => {
             res.status(500).send('Error fetching growth data');
             return;
         }
-        //console.log(Object.keys(results[0]));
         res.json(results);
     });
 });
+
 
 //Get Growth By ID
 app.get('/Growths/:growthID', (req,res) =>{
     const growthID = req.params.growthID;
     db.query(`Select * From Growths WHERE growthID = ?`,[growthID], (error,results) =>{
         if(error){
-            console.log(`Error obtaing growth with ID: ${growthID}`);
+            console.log(`Error obtaining growth with ID: ${growthID}`);
             res.status(500).send('Unable to find growth')
             return;
         }
-        console.log(results);
         res.json(results);
     });
 });
 
+
 //Create New Growth
 app.post('/CreateGrowth', (req,res) => {
-    let { plantID, startDate, dailySunlight, waterFreq, fertilizerFrequency } = req.body;
+    let { plantID, startDate, dailySunlight, waterFrequency, fertilizerFrequency } = req.body;
+    dailySunlight = dailySunlight ? dailySunlight : null;
+    waterFrequency = waterFrequency ? waterFrequency : null;
+    fertilizerFrequency = fertilizerFrequency ? fertilizerFrequency : null;
+
     const query = `
             INSERT INTO Growths (
                 plantID,
@@ -276,7 +298,7 @@ app.post('/CreateGrowth', (req,res) => {
                 waterFrequency,
                 fertilizerFrequency)
             VALUES (?,?,?,?,?)`;
-    db.query(query, [plantID, startDate, dailySunlight, waterFreq, fertilizerFrequency], (error, results) =>{
+    db.query(query, [plantID, startDate, dailySunlight, waterFrequency, fertilizerFrequency], (error, results) =>{
         if(error){
             console.error("Issue inserting new growth entry");
             res.status(500).send('Unable to create growth plant');
@@ -285,6 +307,7 @@ app.post('/CreateGrowth', (req,res) => {
         res.status(201).send('New Growth created');
     });
 });
+
 
 //Update existing Growth Entity
 app.put('/EditGrowth/:editGrowthID', (req,res) =>{
@@ -323,6 +346,20 @@ app.delete('/DeleteGrowth/:growthID', (req,res) => {
 });
 
 
+//Growths Drop Down for Intersection Tables
+app.get('/GrowthsDrop',(req,res) => {
+    db.query(`
+        SELECT growthID, Plants.plantType FROM Growths
+        LEFT JOIN Plants ON Growths.plantID = Plants.plantID`, (error ,results) => {
+        if(error){
+            console.error('Error running dropdown population query:', error);
+            res.status(500).send('Error fetching growths for dropdown');
+            return;
+        }
+        res.json(results);
+    });
+});
+
 //--------------------------------------PRODUCTIONS OPERATIONS-------------------------------------------
 
 //Display all Productions
@@ -338,10 +375,10 @@ app.get('/Productions',(req,res) => {
             Productions.yield,
             Productions.fertilizerFrequency,
             Fertilizers.fertilizerType,
-            Growinglocations.isGround,
-            Growinglocations.isContainer,
-            Growinglocations.bedType,
-            Growinglocations.containerType
+            GrowingLocations.isGround,
+            GrowingLocations.isContainer,
+            GrowingLocations.bedType,
+            GrowingLocations.containerType
         FROM Productions
         LEFT JOIN FertilizerDetails ON Productions.productionID = FertilizerDetails.productionsID
         LEFT JOIN Fertilizers ON FertilizerDetails.fertilizerID = Fertilizers.fertilizerID
@@ -358,23 +395,29 @@ app.get('/Productions',(req,res) => {
     });
 });
 
-//Get Growth By ID
+
+//Get Production By ID
 app.get('/Productions/:productionID', (req,res) =>{
     const productionID = req.params.productionID;
     db.query(`Select * From Productions WHERE productionID = ?`,[productionID], (error,results) =>{
         if(error){
-            console.log(`Error obtaing production with ID: ${productionID}`);
+            console.log(`Error obtaining production with ID: ${productionID}`);
             res.status(500).send('Unable to find production')
             return;
         }
-        console.log(results);
         res.json(results);
     });
 });
 
+
 //Create new Production Entity
 app.post('/CreateProduction', (req,res) => {
     let { plantID, startDate, endDate, waterFrequency, fertilizerFrequency, totalYield } = req.body;
+    endDate = endDate ? endDate : null;
+    waterFrequency = waterFrequency ? waterFrequency : null;
+    fertilizerFrequency = fertilizerFrequency ? fertilizerFrequency : null;
+    totalYield = totalYield ? totalYield : null;
+
     const query = `
         INSERT INTO Productions (
             plantID,
@@ -393,6 +436,7 @@ app.post('/CreateProduction', (req,res) => {
         res.status(201).send('New production created');
     });
 });
+
 
 //Update existing Production Entry
 app.put('/EditProduction/:editProductionID', (req,res) =>{
@@ -417,6 +461,7 @@ app.put('/EditProduction/:editProductionID', (req,res) =>{
     });
 });
 
+
 //Delete existing production entry
 app.delete('/DeleteProduction/:productionID', (req,res) => {
     const productionID = req.params.productionID;
@@ -427,6 +472,21 @@ app.delete('/DeleteProduction/:productionID', (req,res) => {
             return;
         }
         res.status(204).send("Production deleted");
+    });
+});
+
+
+//Productions Drop Down for Intersection Tables
+app.get('/ProductionsDrop',(req,res) => {
+    db.query(`
+        SELECT productionID, Plants.plantType FROM Productions
+        LEFT JOIN Plants ON Productions.plantID = Plants.plantID`, (error ,results) => {
+        if(error){
+            console.error('Error running dropdown population query:', error);
+            res.status(500).send('Error fetching productions for dropdown');
+            return;
+        }
+        res.json(results);
     });
 });
 
@@ -444,12 +504,13 @@ app.get('/Fertilizers',(req,res) => {
     });
 });
 
+
 //Get Fertilizer By ID
 app.get('/Fertilizers/:fertilizerID', (req,res) =>{
     const fertilizerID = req.params.fertilizerID;
     db.query(`Select * From Fertilizers WHERE fertilizerID = ?`,[fertilizerID], (error,results) =>{
         if(error){
-            console.log(`Error obtaing fertilizer with ID: ${fertilizerID}`);
+            console.log(`Error obtaining fertilizer with ID: ${fertilizerID}`);
             res.status(500).send('Unable to find fertilizer')
             return;
         }
@@ -461,6 +522,10 @@ app.get('/Fertilizers/:fertilizerID', (req,res) =>{
 //Create new Fertilizer Entity
 app.post('/CreateFertilizer', (req,res) => {
     let { fertilizerType, nitrogen, phosphorous, potassium } = req.body;
+    nitrogen = nitrogen ? nitrogen : 0;
+    phosphorous = phosphorous ? phosphorous : 0;
+    potassium = potassium ? potassium : 0;
+
     const query = `
         INSERT INTO Fertilizers (
             fertilizerType,
@@ -477,6 +542,7 @@ app.post('/CreateFertilizer', (req,res) => {
         res.status(201).send('New fertilizer created');
     });
 });
+
 
 //Update existing Fertilizer Entry
 app.put('/EditFertilizer/:editFertilizerID', (req,res) =>{
@@ -515,6 +581,18 @@ app.delete('/DeleteFertilizer/:fertilizerID', (req,res) => {
 });
 
 
+//Fertilizer Drop Down for Intersection Table
+app.get('/FertilizersDrop',(req,res) => {
+    db.query(`SELECT fertilizerID, fertilizerType FROM Fertilizers`, (error ,results) => {
+        if(error){
+            console.error('Error running dropdown population query:', error);
+            res.status(500).send('Error fetching fertilizers for dropdown');
+            return;
+        }
+        res.json(results);
+    });
+});
+
 //--------------------------------------GrowingLocations OPERATIONS-------------------------------------------
 
 //Get All growingLocations
@@ -529,24 +607,27 @@ app.get('/GrowingLocations',(req,res) => {
     });
 });
 
+
 //Get GrowingLocation By ID
 app.get('/GrowingLocations/:locationID', (req,res) =>{
     const locationID = req.params.locationID;
     db.query(`Select * From GrowingLocations WHERE locationID = ?`,[locationID], (error,results) =>{
         if(error){
-            console.log(`Error obtaing growingLocation with ID: ${locationID}`);
+            console.log(`Error obtaining growingLocation with ID: ${locationID}`);
             res.status(500).send('Unable to find growingLocation')
             return;
         }
-        console.log(locationID,results);
         res.json(results[0]);
     });
 });
 
+
 //Create new GrowingLocation Entity
 app.post('/CreateGrowingLocation', (req,res) => {
-    console.log(req.body);
     let { isGroundLoc, isContainerLoc, bedType, containerType } = req.body;
+    bedType = isGroundLoc === 1 ? bedType : null;
+    containerType = isContainerLoc === 1 ? containerType : null;
+    
     const query = `
         INSERT INTO GrowingLocations (
             isGround,
@@ -564,17 +645,20 @@ app.post('/CreateGrowingLocation', (req,res) => {
     });
 });
 
+
 //Update existing GrowingLocation Entry
 app.put('/EditGrowingLocation/:editLocationID', (req,res) =>{
     const locationID = req.params.editLocationID;
     let { isGroundLoc, isContainerLoc, bedType, containerType } = req.body;
-    console.log(req.body)
+    bedType = isGroundLoc === 1 ? bedType : null;
+    containerType = isContainerLoc === 1 ? containerType : null;
+
     const query = `
         UPDATE GrowingLocations SET
-            isGround = coalesce(?,isGround), 
-            isContainer = coalesce(?,isContainer), 
-            containerType = coalesce(?,containerType), 
-            bedType = coalesce(?,bedType)
+            isGround = ?, 
+            isContainer = ?,
+            bedType = ?, 
+            containerType = ? 
         WHERE locationID = ?`;
     db.query(query, [isGroundLoc, isContainerLoc, bedType, containerType, locationID], (error, results) =>{
         if(error){
@@ -585,6 +669,7 @@ app.put('/EditGrowingLocation/:editLocationID', (req,res) =>{
         res.status(201).send('GrowingLocation updated');
     });
 });
+
 
 //Delete existing GrowingLocation entry
 app.delete('/DeleteGrowingLocation/:locationID', (req,res) => {
@@ -599,8 +684,24 @@ app.delete('/DeleteGrowingLocation/:locationID', (req,res) => {
     });
 });
 
+
+//Get Locations for dropdown
+app.get('/LocationsDrop',(req,res) => {
+    db.query('SELECT locationID, isGround, bedType, containerType FROM growingLocations', (error ,results) => {
+        if(error){
+            console.error('Error running dropdown population query:', error);
+            res.status(500).send('Error fetching plants for dropdown');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+
 //--------------------------------------FertilizerDetails OPERATIONS-------------------------------------------
 
+//Get All FertilizerDetails
 app.get('/FertilizerDetails',(req,res) => {
     db.query(` SELECT * FROM FertilizerDetails`, (error, results) => {
         if(error){
@@ -612,8 +713,83 @@ app.get('/FertilizerDetails',(req,res) => {
     });
 });
 
+
+//Get FertilizerDetails By ID
+app.get('/FertilizerDetails/:detailsID', (req,res) =>{
+    const detailsID = req.params.detailsID;
+    db.query(`Select * From FertilizerDetails WHERE detailsID = ?`,[detailsID], (error,results) =>{
+        if(error){
+            console.log(`Error obtaining FertilizerDetails with ID: ${detailsID}`);
+            res.status(500).send('Unable to find FertilizerDetails')
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+//Insert new FertilizerDetails
+app.post('/CreateFertilizerDetails',(req,res) => {
+    let { fertilizerID, growthsID, productionsID } = req.body;
+    growthsID = growthsID ? growthsID : null;
+    productionsID = productionsID ? productionsID : null;
+    const query = `
+        INSERT INTO FertilizerDetails (
+            fertilizerID,
+            growthsID,
+            productionsID)
+        VALUES (?,?,?)`;
+    db.query(query, [fertilizerID, growthsID, productionsID], (error, results) =>{
+            if(error){
+                console.error("Issue inserting FertilizerDetails entry");
+                res.status(500).send('Unable to create FertilizerDetails entry');
+                return;
+            }
+            res.status(201).send('FertilizerDetails entry created');
+        });
+});
+
+
+//Update existing FertilizerDetails Entry
+app.put('/EditFertilizerDetails/:editFertilzerDetailsID', (req,res) =>{
+    const fertilzerDetailsID = req.params.editFertilzerDetailsID;
+    let { growthsID, productionsID } = req.body;
+    growthsID = growthsID ? growthsID : null;
+    productionsID = productionsID ? productionsID : null;
+   
+    const query =`
+        UPDATE FertilizerDetails SET
+            growthsID = ?, 
+            productionsID = ? 
+        WHERE detailsID = ?`;
+        
+    db.query(query, [ growthsID, productionsID, fertilzerDetailsID], (error, results) =>{
+        if(error){
+            console.error(`Issue updating FertilizerDetails entry with ID: ${fertilzerDetailsID}`);
+            res.status(500).send('Unable to update FertilizerDetails entry');
+            return;
+        }
+        res.status(201).send('FertilizerDetails updated');
+    });
+});
+
+
+//Delete existing FertilizerDetails entry
+app.delete('/DeleteFertilizerDetails/:detailsID', (req,res) => {
+    const detailsID = req.params.detailsID;
+    db.query('DELETE FROM FertilizerDetails WHERE detailsID = ?', [detailsID], (error, results) =>{
+        if(error){
+            console.error(`Issue deleting FertilizerDetails entry with detailsID ${detailsID} `);
+            res.status(500).send('Unable to delete FertilizerDetails');
+            return;
+        }
+        res.status(204).send("FertilizerDetails entry deleted");
+    });
+});
+
 //--------------------------------------LocationDetails OPERATIONS-------------------------------------------
 
+//Get All LocationDetails
 app.get('/LocationDetails',(req,res) => {
     db.query(` SELECT * FROM LocationDetails`, (error, results) => {
         if(error){
@@ -626,6 +802,76 @@ app.get('/LocationDetails',(req,res) => {
 });
 
 
+//Get LocationDetails By ID
+app.get('/LocationDetails/:locationDetailsID', (req,res) =>{
+    const locationDetailsID = req.params.locationDetailsID;
+    db.query(`Select * From LocationDetails WHERE locationDetailsID = ?`,[locationDetailsID], (error,results) =>{
+        if(error){
+            console.log(`Error obtaining LocationDetails with ID: ${locationDetailsID}`);
+            res.status(500).send('Unable to find LocationDetails')
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+//Insert new LocationDetails
+app.post('/CreateLocationDetails',(req,res) => {
+    let { locationsID, growthsID, productionsID } = req.body;
+    growthsID = growthsID ? growthsID : null;
+    productionsID = productionsID ? productionsID : null;
+    const query = `
+        INSERT INTO LocationDetails (
+            growingLocationsID,
+            growthsID,
+            productionsID)
+        VALUES (?,?,?)`;
+    db.query(query, [locationsID, growthsID, productionsID], (error, results) =>{
+            if(error){
+                console.error("Issue inserting LocationDetails entry");
+                res.status(500).send('Unable to create LocationDetails entry');
+                return;
+            }
+            res.status(201).send('LocationDetails entry created');
+        });
+});
+
+
+//Update existing GrowingLocation Entry
+app.put('/EditLocationDetails/:editLocationDetailsID', (req,res) =>{
+    const locationDetailsID = req.params.editLocationDetailsID;
+    let { growthsID, productionsID } = req.body;
+   
+    const query =`
+        UPDATE LocationDetails SET
+            growthsID = ?, 
+            productionsID = ? 
+        WHERE locationDetailsID = ?`;
+        
+    db.query(query, [ growthsID, productionsID, locationDetailsID], (error, results) =>{
+        if(error){
+            console.error(`Issue updating LocationDetails entry with ID: ${locationDetailsID}`);
+            res.status(500).send('Unable to update LocationDetails entry');
+            return;
+        }
+        res.status(201).send('LocationDetails updated');
+    });
+});
+
+
+//Delete existing LocationDetails entry
+app.delete('/DeleteLocationDetails/:locationDetailsID', (req,res) => {
+    const locationDetailsID = req.params.locationDetailsID;
+    db.query('DELETE FROM LocationDetails WHERE locationDetailsID = ?', [locationDetailsID], (error, results) =>{
+        if(error){
+            console.error(`Issue deleting LocationDetails entry with detailsID ${locationDetailsID} `);
+            res.status(500).send('Unable to delete LocationDetails');
+            return;
+        }
+        res.status(204).send("LocationDetails entry deleted");
+    });
+});
 
 
 // Add your Connect DB Activitiy Code Below:

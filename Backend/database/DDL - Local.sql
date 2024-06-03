@@ -1,5 +1,5 @@
 /* Create Base table for each Plant  */
-CREATE OR REPLACE TABLE Plants(
+CREATE TABLE Plants(
     plantID int NOT NULL AUTO_INCREMENT,
     plantType varchar(45) NOT NULL,  /* Name of plant in plain text */
     seasonComplete tinyint DEFAULT 0, /* Marks completion of harvest */
@@ -7,7 +7,7 @@ CREATE OR REPLACE TABLE Plants(
 );
 
 /* Establish table for seedling state of plant  */
-CREATE OR REPLACE TABLE Seedlings(
+CREATE TABLE Seedlings(
     seedlingID int NOT NULL AUTO_INCREMENT,
     plantID int NOT NULL,  /* Associates seedling state to plant */
     datePlanted date NOT NULL,
@@ -19,7 +19,7 @@ CREATE OR REPLACE TABLE Seedlings(
 );
 
 /* Establishes table for growth stage of plant  */
-CREATE OR REPLACE TABLE Growths(
+CREATE TABLE Growths(
     growthID int NOT NULL AUTO_INCREMENT,
     plantID int NOT NULL,
     startDate date NOT NULL,
@@ -31,7 +31,7 @@ CREATE OR REPLACE TABLE Growths(
 );
 
 /* Establishes table for Production stage of plant  */
-CREATE OR REPLACE TABLE Productions(
+CREATE TABLE Productions(
     productionID int NOT NULL AUTO_INCREMENT,
     plantID int NOT NULL,
     startDate date NOT NULL,
@@ -44,7 +44,7 @@ CREATE OR REPLACE TABLE Productions(
 );
 
 /* Establishes set of possible locations plant may be growing  */
-CREATE OR REPLACE TABLE GrowingLocations(
+CREATE TABLE GrowingLocations(
     locationID int NOT NULL AUTO_INCREMENT,
     isGround tinyint DEFAULT 0 NOT NULL,  /* Represents in ground location */
     isContainer tinyint DEFAULT 0 NOT NULL, /* Container Location  */
@@ -54,7 +54,7 @@ CREATE OR REPLACE TABLE GrowingLocations(
 );
 
 /* Intersection table to associate locations to plant and stage */
-CREATE OR REPLACE TABLE LocationDetails(
+CREATE TABLE LocationDetails(
     locationDetailsID int NOT NULL AUTO_INCREMENT,
     growingLocationsID int NOT NULL,
     growthsID int,
@@ -66,7 +66,7 @@ CREATE OR REPLACE TABLE LocationDetails(
 );
 
 /* Table for storing types of fertilizer and relevant properties of them */
-CREATE OR REPLACE TABLE Fertilizers(
+CREATE TABLE Fertilizers(
     fertilizerID int NOT NULL AUTO_INCREMENT,
     fertilizerType varchar(255),
     nitrogen int, /* Value shown on fertilizer. Does not refer to a specific percentage or volume. Is the case for all three components  */
@@ -76,12 +76,12 @@ CREATE OR REPLACE TABLE Fertilizers(
 );
 
 /* Intersection table to associate fertilizers to plant stages  */
-CREATE OR REPLACE TABLE FertilizerDetails(
-    fertilizerDetailsID int NOT NULL AUTO_INCREMENT,
+CREATE TABLE FertilizerDetails(
+    detailsID int NOT NULL AUTO_INCREMENT,
     fertilizerID int NOT NULL,
     growthsID int,
     productionsID int,
-    PRIMARY KEY (fertilizerDetailsID),
+    PRIMARY KEY (detailsID),
     FOREIGN KEY (fertilizerID) REFERENCES Fertilizers(fertilizerID) ON DELETE CASCADE,
     FOREIGN KEY (growthsID) REFERENCES Growths(growthID) ON DELETE SET NULL,
     FOREIGN KEY (productionsID) REFERENCES Productions(productionID) ON DELETE SET NULL

@@ -15,7 +15,14 @@ function Growths() {
     const [fertilizerFrequency, setFertilizerFrequency] = useState("") 
 
 
+    //Send POST request to create new Growths Entry
     const addGrowth = async (e) =>{
+        if(!plantID || !startDate){
+            alert("Plant Type and a Start Date are required to create a Growth");
+            resetForm();
+            return;
+        }
+
         const response = await fetch(`${URL}/CreateGrowth`, {
             method: 'POST',
             body: JSON.stringify({ plantID, startDate, dailySunlight, waterFrequency, fertilizerFrequency}),
@@ -25,11 +32,14 @@ function Growths() {
         if(response.ok) {
             loadGrowths();
             resetForm();
+            alert("Growth Entry Added!");
         }else{
             console.error('Failed to create new growths entry');
         }
     }
 
+
+    //Send GET request to obtain current information on selected entry and enter edit mode
     const editGrowth = async (growthID) => {
         resetForm();
         if (edit){
@@ -50,6 +60,8 @@ function Growths() {
         }
     }
 
+
+    //Send PUT request to update selected entry
     const updateGrowth = async () =>{
         const response = await fetch(`${URL}/EditGrowth/${editGrowthID}`, {
             method: 'PUT',
@@ -62,22 +74,58 @@ function Growths() {
             resetForm();
             setEdit(false);
             setEditGrowthID(null);
+            alert("Growth Entry Updated!");
         } else {
             console.error('Failed to update growth entry');
         }
     }
 
 
+    //Send DELETE request on selected entry
     const deleteGrowth = async (growthID) =>{
         const response = await fetch(`${URL}/DeleteGrowth/${growthID}`, { method: 'DELETE' });
         if(response.ok){
             loadGrowths();
+            alert("Growth Entry Removed!");
         } else{
             console.error(`Failed to delete Growth with growthID = ${growthID}, status code = ${response.status}`);
         }
     }
 
 
+    //Send GET request for all entries of Growths Entity
+    const loadGrowths = async ()=>{
+        const response = await fetch(`${URL}/Growths`);
+        const growths = await response.json();
+        setGrowths(growths);
+    }
+
+
+    //Load Table at first access and after each update
+    useEffect(() => {
+        loadGrowths();
+    })
+
+
+    //Reset State variables contained in form
+    const resetForm = () =>{
+        setPlantID("");
+        setStartDate("");
+        setDailySunlight("");
+        setWaterFrequency("");
+        setFertilizerFrequency("");
+    }
+
+
+    //Navigate form submit to needed operation
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+        if(edit){
+            updateGrowth();
+        }else{
+            addGrowth();
+        }
+    }
 
 
     // Fill Growths Table
@@ -94,43 +142,15 @@ function Growths() {
                 growth.plantID,
                 growth.plantType,
                 startDate.toLocaleDateString(),
-                `${growth.dailySunlight} Hours`,
-                `Every ${growth.waterFrequency} Days`,
-                `Every ${growth.fertilizerFrequency} Days`,
+                growth.dailySunlight ? `${growth.dailySunlight} Hours` : "",
+                growth.waterFrequency ? `Every ${growth.waterFrequency} Days` : "",
+                growth.fertilizerFrequency ? `Every ${growth.fertilizerFrequency} Days`: "",
                 growth.fertilizerType,
                 growLocation,
                 <Buttons key={growth.id} onEditClick={()=> editGrowth(growth.growthID)} onDeleteClick={()=> deleteGrowth(growth.growthID)} />
             ]
         }
     })
-
-
-    const loadGrowths = async ()=>{
-        const response = await fetch(`${URL}/Growths`); //TODO Change Fetch url
-        const growths = await response.json();
-        setGrowths(growths);
-    }
-
-    useEffect(() => {
-        loadGrowths();
-    })
-
-    const resetForm = () =>{
-        setPlantID("");
-        setStartDate("");
-        setDailySunlight("");
-        setWaterFrequency("");
-        setFertilizerFrequency("");
-    }
-
-    const submitHandler = async(e) =>{
-        e.preventDefault();
-        if(edit){
-            updateGrowth();
-        }else{
-            addGrowth();
-        }
-    }
 
 
     return (

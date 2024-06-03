@@ -16,8 +16,14 @@ function Productions() {
     const [totalYield, setTotalYield] = useState("")
 
 
-
+    //Send POST request to create new Productions Entry
     const addProduction = async (e) =>{
+        if(!plantID || !startDate){
+            alert("Plant Type and a Start Date are required to create a Production");
+            resetForm();
+            return;
+        }
+
         const response = await fetch(`${URL}/CreateProduction`, {
             method: 'POST',
             body: JSON.stringify({ plantID, startDate, endDate, waterFrequency, fertilizerFrequency, totalYield}),
@@ -25,6 +31,7 @@ function Productions() {
         })
 
         if(response.ok) {
+            alert("New Production Added!");
             loadProductions();
             resetForm();
         }else{
@@ -33,6 +40,7 @@ function Productions() {
     }
 
 
+    //Send GET request to obtain current information on selected entry and enter edit mode
     const editProduction = async (productionID) => {
         resetForm();
         if (edit){
@@ -54,6 +62,8 @@ function Productions() {
         }
     }
 
+
+    //Send PUT request to update selected entry
     const updateProduction = async () =>{
         const response = await fetch(`${URL}/EditProduction/${editProductionID}`, {
             method: 'PUT',
@@ -66,15 +76,18 @@ function Productions() {
             resetForm();
             setEdit(false);
             setEditProductionID(null);
+            alert("Production Entry Updated!");
         } else {
             console.error('Failed to update production entry');
         }
     }
 
 
-    const DeleteProduction = async (productionID) =>{
+    //Send DELETE request on selected entry
+    const deleteProduction = async (productionID) =>{
         const response = await fetch(`${URL}/DeleteProduction/${productionID}`, { method: 'DELETE' });
         if(response.ok){
+            alert("Production entry removed!");
             loadProductions();
         } else{
             console.error(`Failed to delete Production with productionID = ${productionID}, status code = ${response.status}`);
@@ -82,41 +95,21 @@ function Productions() {
     }
 
 
-    // Fill Productions Table
-    const customClass = "plantTable"
-    const theadData = ["Production ID", "Plant ID", "Plant Name", "Start Date", "End Production Date", "Water Frequency", "Fertilizer Frequency", "Total Yield","Fertilizer","Location", "Modify"];
-
-    const tbodyData = productions.map(production => {
-        const dateStarted = new Date(production.startDate);
-        const dateEnded = new Date(production.endProduction);
-        const growLocation = production.isGround ? production.bedType : production.containerType;  
-        return {
-            id: production.productionID,
-            items: [
-                production.productionID,
-                production.plantID,
-                production.plantType,
-                dateStarted.toLocaleDateString(),
-                dateEnded.toLocaleDateString(),
-                `Every ${production.waterFrequency} Days`,
-                `Every ${production.fertilizerFrequency} Days`,
-                `${production.yield} Pounds`,
-                production.fertilizerType,
-                growLocation,
-                <Buttons key={production.id} onEditClick={()=> editProduction(production.productionID)} onDeleteClick={()=> DeleteProduction(production.productionID)} />
-            ]
-        }
-    });
+    //Send GET request for all entries of Productions Entity
     const loadProductions = async ()=>{
-        const response = await fetch(`${URL}/Productions`); //TODO Change Fetch url
+        const response = await fetch(`${URL}/Productions`);
         const productions = await response.json();
         setProductions(productions);
     }
 
+
+    //Load Table at first access and after each update
     useEffect(() => {
         loadProductions();
     })
 
+
+    //Reset State variables contained in form
     const resetForm = () =>{
         setPlantID("");
         setStartDate("");
@@ -126,6 +119,8 @@ function Productions() {
         setTotalYield("");
     }
 
+
+    //Navigate form submit to needed operation
     const submitHandler = async(e) =>{
         e.preventDefault();
         if(edit){
@@ -134,6 +129,34 @@ function Productions() {
             addProduction();
         }
     }
+
+
+    //Fill Table Component
+    const customClass = "plantTable"
+    const theadData = ["Production ID", "Plant ID", "Plant Name", "Start Date", "End Production Date", "Water Frequency", "Fertilizer Frequency", "Total Yield","Fertilizer","Location", "Modify"];
+
+    const tbodyData = productions.map(production => {
+        const dateStarted = new Date(production.startDate);
+        const dateEnded = production.endProduction ? new Date(production.endProduction): null;
+        const growLocation = production.isGround ? production.bedType : production.containerType;  
+        return {
+            id: production.productionID,
+            items: [
+                production.productionID,
+                production.plantID,
+                production.plantType,
+                dateStarted.toLocaleDateString(),
+                dateEnded ? dateEnded.toLocaleDateString() : dateEnded,
+                production.waterFrequency ? `Every ${production.waterFrequency} Days` : "",
+                production.fertilizerFrequency ? `Every ${production.fertilizerFrequency} Days` : "",
+                production.yield ? `${production.yield} Pounds` : "",
+                production.fertilizerType,
+                growLocation,
+                <Buttons key={production.id} onEditClick={()=> editProduction(production.productionID)} onDeleteClick={()=> deleteProduction(production.productionID)} />
+            ]
+        }
+    });
+
 
     return (
         <body>
