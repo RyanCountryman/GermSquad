@@ -1,92 +1,187 @@
 import React, {useState, useEffect} from 'react';
 import Table from '../components/Tables';
 import Buttons from '../components/Buttons';
+import URL from '../config'
+import GrowthsDropDown from '../components/GrowthsDropdown';
+import ProductionsDropDown from '../components/ProductionsDropdown';
+import LocationsDropDown from '../components/GrowingLocationsDropdown';
 
 function LocationDetails() {
     const [locationDetails, setLocationDetails] = useState([]);
+    const [edit, setEdit] = useState(false);
+    const [editLocationDetailsID, setEditLocationDetailsID] = useState(null);
+    const [growthsID, setGrowthsID] = useState(null);
+    const [productionsID, setProductionsID] = useState(null);
+    const [locationsID, setLocationsID] = useState(null);
 
+    //Send POST request to create new LocationDetails Entry
+    const addLocationDetails = async (e) =>{
+        const response = await fetch(`${URL}/CreateLocationDetails`, {
+            method: 'POST',
+            body: JSON.stringify({ locationsID, growthsID, productionsID} ),
+            headers: {'Content-Type': 'application/json'}
+        })
+
+        if(response.ok) {
+            loadLocationDetails();
+            resetForm();
+            alert("New LocationDetails Added!");
+        }else{
+            console.error('Failed to create new LocationDetails entry');
+        }
+    }
+
+
+    //Send GET request to obtain current information on selected entry and enter edit mode
+    const editLocationDetails = async (locationDetailsID) => {
+        resetForm();
+        if (edit){
+             setEdit(false)
+        } else{
+            const response = await fetch(`${URL}/LocationDetails/${locationDetailsID}`);
+            if (response.ok) {
+                const locationDetail = await response.json();
+                setLocationsID(locationDetail.growingLocationsID)
+                setGrowthsID(locationDetail.growthsID)
+                setProductionsID(locationDetail.productionsID)
+                setEdit(true);
+                setEditLocationDetailsID(locationDetailsID);
+            } else {
+                console.error(`Failed to fetch LocationDetails with locationDetailsID = ${locationDetailsID}, status code = ${response.status}`);
+            }
+        }
+    }
+
+    
+    //Send PUT request to update selected entry
+    const updateLocationDetails = async () =>{
+        const response = await fetch(`${URL}/EditLocationDetails/${editLocationDetailsID}`, {
+            method: 'PUT',
+            body: JSON.stringify({ growthsID, productionsID }),
+            headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (response.ok) {
+            loadLocationDetails();
+            resetForm();
+            setEdit(false);
+            setEditLocationDetailsID(null);
+            alert("LocationDetails Entry Updated!");
+        } else {
+            console.error('Failed to update LocationDetails entry');
+        }
+    }
+
+
+    //Send DELETE request on selected entry
+    const deleteLocationDetails = async (locationDetailsID) =>{
+        const response = await fetch(`${URL}/DeleteLocationDetails/${locationDetailsID}`, { method: 'DELETE' });
+        if(response.ok){
+            loadLocationDetails();
+            alert("LocationDetails entry removed!");
+        } else{
+            console.error(`Failed to delete LocationDetails with locationDetailsID = ${locationDetailsID}, status code = ${response.status}`);
+        }
+    }
+
+
+    //Send GET request for all entries of LocationDetails Entity
+    const loadLocationDetails = async ()=>{
+        const response = await fetch(`${URL}/LocationDetails`);
+        const locationDetails = await response.json();
+        setLocationDetails(locationDetails);
+    }
+
+
+    //Load Table at first access and after each update
+    useEffect(() => {
+        loadLocationDetails();
+    })
+
+
+    //Reset State variables contained in form
+    const resetForm = () =>{
+        setGrowthsID("");
+        setProductionsID("");
+        setLocationsID("");
+    }
+
+    //Navigate form submit to needed operation
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+
+        if(locationsID === null || (growthsID === null && productionsID === null)){
+            alert("A locationsID as well as either a growth or production ID required");
+            resetForm()
+            return;
+        }else if( !growthsID  && !productionsID ){
+            alert("A LocationDetails entry should have either a growth or a production ID")
+            resetForm()
+            return;
+        }
+
+        if(edit){
+            updateLocationDetails();
+        }else{
+            addLocationDetails();
+        }
+    }
+
+
+    //Fill Table Component
     const customClass = "plantTable"
     const theadData = ["LocationDetailsID", "locationID", "growthsID", "productionsID", "Modify"];
-
 
     const tbodyData = locationDetails.map(locationDetail => {  
         return {
             id: locationDetail.locationDetailsID,
             items: [
-                locationDetail.locationDetailsID, //TODO ADD IN CONDITIONALS IF NEEDED FOR DISPLAY
+                locationDetail.locationDetailsID,
                 locationDetail.growingLocationsID,
                 locationDetail.growthsID,
                 locationDetail.productionsID,
-                <Buttons key={locationDetail.id} />
+                <Buttons key={locationDetail.id} onEditClick={()=> editLocationDetails(locationDetail.locationDetailsID)} onDeleteClick={()=>deleteLocationDetails(locationDetail.locationDetailsID)} />
             ]
         }
     });
 
-    const loadLocationDetails = async ()=>{
-        const response = await fetch('http://localhost:8500/LocationDetails'); //TODO Change Fetch url
-        const locationDetails = await response.json();
-        setLocationDetails(locationDetails);
-    }
-
-    useEffect(() => {
-        loadLocationDetails();
-    })
 
     return (
-        <body>
-        <header>
-            <h2>LocationDetails</h2>
-        </header>
         <main id="LocationDetails">
+            <header>
+                <h2>LocationDetails</h2>
+            </header>
             <div>
             <Table theadData={theadData} tbodyData={tbodyData} customClass={customClass} />
             </div>
             <section >
-                <h3>Create New LocationDetails</h3>
+                <h3>{edit ? "Edit Entry" : "Create New Entry"}</h3>
                 <article>
-                    <form action="/LocationDetails" method="POST">
+                    <form onSubmit={submitHandler}>
                         <fieldset>
-                            <legend>New Location Details</legend>
+                            <legend>{edit ? "Edit Entry" : "New Location Details"}</legend>
+                            {!edit &&(
+                                <p>
+                                    <label htmlFor="LocationDetails">LocationID  </label>
+                                    <LocationsDropDown selectedLocationID={locationsID} setSelectedLocationID={setLocationsID}></LocationsDropDown>
+                                </p>
+                            )}
                             <p>
-                                <label for="LocationDetails">LocationID  </label>
-                                <select name = "GrowingLocationID" id="locationID">
-                                    <option value="NULL"></option>
-                                    <option value="1">inGround, Raised Bed</option>
-                                    <option value="2">inGround, Row</option>
-                                    <option value="3">inGround, Trellised Bed</option>
-                                    <option value="4">inContainer, Ceramic 3 Gal</option>
-                                    <option value="5">inContainer, Cloth 5 Gal</option>
-                                </select>
+                                <label htmlFor="Growth">GrowthID  </label>
+                                <GrowthsDropDown selectedGrowthID={growthsID} setSelectedGrowthID={setGrowthsID}></GrowthsDropDown>
                             </p>
                             <p>
-                                <label for="Growth">GrowthID  </label>
-                                    <select name = "growthsID" id="growthsID">
-                                        <option value="NULL"></option>
-                                        <option value="1">ID 1 - Cherry Tomato</option>
-                                        <option value="2">ID 2 -Chocolate Seven Pot Pepper</option>
-                                        <option value="3">ID 3 -Honey Nut Squash</option>
-                                        <option value="4">ID 4 -English Cucumber</option>
-                                    </select>
+                                <label htmlFor="ProductionID">ProductionID  </label>
+                                <ProductionsDropDown selectedProductionID={productionsID} setSelectedProductionID={setProductionsID}></ProductionsDropDown>
                             </p>
                             <p>
-                                <label for="ProductionID">ProductionID  </label>
-                                        <select name = "productionsID" id="productionsID">
-                                            <option value="NULL"></option>
-                                            <option value="1">ID 1 - Cherry Tomato</option>
-                                            <option value="2">ID 2 -Chocolate Seven Pot Pepper</option>
-                                            <option value="3">ID 3 -Honey Nut Squash</option>
-                                            <option value="4">ID 4 -English Cucumber</option>
-                                        </select>
-                            </p>
-                            <p>
-                                <button class="btn btn-submit">Submit</button>
+                                <button className="btn btn-submit" type="submit">{edit ? "Update" : "Submit"}</button>
                             </p>
                         </fieldset>
                     </form>
                 </article>
             </section>
-        </main>   
-    </body>     
+        </main>        
     )
 }
 export default LocationDetails;

@@ -12,8 +12,14 @@ function Fertilizers() {
     const [phosphorous, setPhosphorous] = useState("")
     const [potassium, setPotassium] = useState("")
 
-    //Add new fertilizer entry to table
+
+    //Send POST request to create new Fertilizer Entry
     const addFertilizer = async (e) =>{
+        if(!fertilizerType){
+            alert("Fertilizer Type is needed to create new entry!");
+            resetForm();
+            return;
+        }
        const response = await fetch(`${URL}/CreateFertilizer`, {
            method: 'POST',
            body: JSON.stringify({ fertilizerType, nitrogen, phosphorous, potassium}),
@@ -21,6 +27,7 @@ function Fertilizers() {
        });
 
        if(response.ok) {
+            alert("New Fertilizer Added!");
            loadFertilizers();
            resetForm();
        }else{
@@ -29,13 +36,11 @@ function Fertilizers() {
    };
 
 
-    //GET Fertilizer attribute values by ID and store for edit
+    //Send GET request to obtain current information on selected entry and enter edit mode
     const editFertilizer = async (fertilizerID) => {
-        console.log("WE HERE FROM EDIT")
         resetForm();
         if (edit){
             setEdit(false);
-
         } else{
             const response = await fetch(`${URL}/Fertilizers/${fertilizerID}`);
             if (response.ok) {
@@ -52,9 +57,10 @@ function Fertilizers() {
         }
     };
 
-    //Update selected ID with changed values in form
+
+    //Send PUT request to update selected entry
     const updateFertilizer = async () =>{
-        const response = await fetch(`${URL}/EditFertilizers/${editFertilizerID}`, {
+        const response = await fetch(`${URL}/EditFertilizer/${editFertilizerID}`, {
             method: 'PUT',
             body: JSON.stringify({ fertilizerType, nitrogen, phosphorous, potassium }),
             headers: { 'Content-Type': 'application/json' }
@@ -65,22 +71,60 @@ function Fertilizers() {
             resetForm();
             setEdit(false);
             setEditFertilizerID(null);
+            alert("Fertilizer Entry Updated!");
         } else {
             console.error('Failed to update Fertilizer entry');
         }
     };
 
 
-    //Delete existing fertilizer entry from table
-   const deleteFertilizer = async (fertilizerID) =>{
-    const response = await fetch(`${URL}/DeleteFertilizer/${fertilizerID}`, { method: 'DELETE' });
-    if(response.ok){
-        loadFertilizers();
-    } else{
-        console.error(`Failed to delete Fertilizer with fertilizerID = ${fertilizerID}, status code = ${response.status}`);
-    }
-};
+    //Send DELETE request on selected entry
+    const deleteFertilizer = async (fertilizerID) =>{
+        const response = await fetch(`${URL}/DeleteFertilizer/${fertilizerID}`, { method: 'DELETE' });
+        if(response.ok){
+            alert("Fertilizer entry removed!");
+            loadFertilizers();
+        } else{
+            console.error(`Failed to delete Fertilizer with fertilizerID = ${fertilizerID}, status code = ${response.status}`);
+        }
+    };
 
+
+    //Send GET request for all entries of Fertilizers Entity
+    const loadFertilizers = async ()=>{
+        const response = await fetch(`${URL}/Fertilizers`);
+        const fertilizers = await response.json();
+        setFertilizers(fertilizers);
+    }
+
+    //Load Table at first access and after each update
+    useEffect(() => {
+        loadFertilizers();
+    }, []);
+
+
+    //Reset State variables contained in form
+    const resetForm = () =>{
+        setFertilizerType("")
+        setNitrogen("")
+        setPhosphorous("")
+        setPotassium("")
+    }
+
+
+    //Navigate form submit to needed operation
+    const submitHandler = async(e) =>{
+        e.preventDefault();
+
+        if(edit){
+            updateFertilizer()
+        }else{
+            addFertilizer()
+        }
+    }
+
+
+    //Fill Table Component
     const customClass = "plantTable"
     const theadData = ["Fertilizer ID", "Fertilizer Type", "Nitrogen", "Phosphorous", "Potassium", "Modify"];
 
@@ -97,33 +141,6 @@ function Fertilizers() {
             ]
         }
     });
-
-
-    const loadFertilizers = async ()=>{
-        const response = await fetch(`${URL}/Fertilizers`);
-        const fertilizers = await response.json();
-        setFertilizers(fertilizers);
-    }
-
-    const resetForm = () =>{
-        setFertilizerType("")
-        setNitrogen("")
-        setPhosphorous("")
-        setPotassium("")
-    }
-
-    useEffect(() => {
-        loadFertilizers();
-    }, []);
-
-    const submitHandler = async(e) =>{
-        e.preventDefault();
-        if(edit){
-            updateFertilizer()
-        }else{
-            addFertilizer()
-        }
-    }
 
 
     return (

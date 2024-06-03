@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
+import URL from '../config'
 
+
+//Create Dynamically populated dropdown menu of Plants
 const PlantDropDown = ({selectedPlantID, setSelectedPlantID}) =>{
     const [plants, setPlants] = useState([]);
-    //const [selectedPlantID, setSelectedPlantID] = useState('')
-
+    
     const populateDropDown = async ()=>{
-        const response = await fetch('http://localhost:8500/PlantsDrop'); //TODO Change Fetch url
+        const response = await fetch(`${URL}/PlantsDrop`);
         const plants = await response.json();
         setPlants(plants);
     }

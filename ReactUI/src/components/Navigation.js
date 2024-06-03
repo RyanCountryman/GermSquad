@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import React, { useState } from "react";
 import './nav.css';  
 
+
+//Navigation tool to specified pages
 function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
 
