@@ -157,10 +157,9 @@ function Fertilizers() {
                 <article>
                     <form onSubmit={submitHandler}>
                         <fieldset>
-                            <legend>{edit ?  "Edit Entry" : "New Fertilizer"}</legend>
                             <p>
                                 <label htmlFor="Fertilizer">Fertilizer Type </label>
-                                <input type="text" name="Fertilizer" id="Fertilizer" value={fertilizerType} onChange={(e)=> setFertilizerType(e.target.value)}/>
+                                <input type="text" placeholder= "Brand Name/ Product Type" name="Fertilizer" id="Fertilizer" value={fertilizerType} onChange={(e)=> setFertilizerType(e.target.value)}/>
                             </p>
                             <p>
                                 <label htmlFor="Nitrogen">Nitrogen </label>

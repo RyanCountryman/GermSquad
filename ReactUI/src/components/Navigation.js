@@ -23,9 +23,9 @@ function Navigation() {
                 <Link to='/Growths'>Growths</Link>
                 <Link to='/Productions'>Productions</Link>
                 <Link to='/Fertilizers'>Fertilizers</Link>
-                <Link to='/GrowingLocations'>GrowingLocations</Link>
-                <Link to='/FertilizerDetails'>FertilizerDetails</Link>
-                <Link to='/LocationDetails'>LocationDetails</Link>
+                <Link to='/GrowingLocations'>Growing Locations</Link>
+                <Link to='/FertilizerDetails'>Fertilizer Details</Link>
+                <Link to='/LocationDetails'>Location Details</Link>
             </div>
         </nav>
     )

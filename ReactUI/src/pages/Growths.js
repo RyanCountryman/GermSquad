@@ -32,7 +32,7 @@ function Growths() {
         if(response.ok) {
             loadGrowths();
             resetForm();
-            alert("Growth Entry Added!");
+            alert("Growths Entry Added!");
         }else{
             console.error('Failed to create new growths entry');
         }
@@ -74,9 +74,9 @@ function Growths() {
             resetForm();
             setEdit(false);
             setEditGrowthID(null);
-            alert("Growth Entry Updated!");
+            alert("Growths Entry Updated!");
         } else {
-            console.error('Failed to update growth entry');
+            console.error('Failed to update Growths entry');
         }
     }
 
@@ -86,9 +86,9 @@ function Growths() {
         const response = await fetch(`${URL}/DeleteGrowth/${growthID}`, { method: 'DELETE' });
         if(response.ok){
             loadGrowths();
-            alert("Growth Entry Removed!");
+            alert("Growths Entry Removed!");
         } else{
-            console.error(`Failed to delete Growth with growthID = ${growthID}, status code = ${response.status}`);
+            console.error(`Failed to delete Growths with growthID = ${growthID}, status code = ${response.status}`);
         }
     }
 
@@ -165,10 +165,9 @@ function Growths() {
             <section >
                 <h3>{edit ? "Edit Growth" : "Create New Entry"}</h3>
                 <article>
-                    <h5>{edit ? "" : "Which plant is this?"}</h5>
                     <form onSubmit={submitHandler}>
                         <fieldset>
-                            <legend>{edit ? "Edit Entry" : "New Growth"}</legend>
+                            <legend>{edit ? "" : "Which plant is this?"}</legend>
                             {!edit && (   
                                 <p>
                                     <label htmlFor="Growth">Plant Type </label>

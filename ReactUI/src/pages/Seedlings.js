@@ -35,7 +35,7 @@ function Seedlings() {
             loadSeedlings();
             resetForm();
         }else{
-            console.error('Failed to create new seedling entry');
+            console.error('Failed to create new seedlings entry');
         }
     };
 
@@ -75,9 +75,9 @@ function Seedlings() {
             resetForm();
             setEdit(false);
             setEditSeedlingID(null);
-            alert("Seedling Entry Updated!");
+            alert("Seedlings Entry Updated!");
         } else {
-            console.error('Failed to update seedling entry');
+            console.error('Failed to update seedlings entry');
         }
     };
 
@@ -86,7 +86,7 @@ function Seedlings() {
     const deleteSeedling = async (seedlingID) =>{
         const response = await fetch(`${URL}/DeleteSeedling/${seedlingID}`, { method: 'DELETE' });
         if(response.ok){
-            alert("Seedling entry removed!");
+            alert("Seedlings entry removed!");
             loadSeedlings();
         } else{
             console.error(`Failed to delete Seedling with seedlingID = ${seedlingID}, status code = ${response.status}`);
@@ -163,10 +163,8 @@ function Seedlings() {
                 <section >
                 <h3>{edit ?  "Edit Seedling" : "Create New Entry"}</h3>
                     <article>
-                        <h5>{edit ?  "" : "What are you planting?"}</h5>
                         <form onSubmit={submitHandler}>
                             <fieldset> 
-                                <legend>{edit ?  "Edit Entry" : "New Seedling"}</legend>
                                 {!edit && (
                                     <p>
                                         <label htmlFor="plantType">Plant Type </label>
