@@ -31,7 +31,7 @@ function Plants() {
         if(response.ok) {
             loadPlants();
             resetForm();
-            alert("Plant Entry Added!");
+            alert("Plants Entry Added!");
         }else{
             console.error('Failed to create new plant entry');
         }
@@ -72,9 +72,9 @@ function Plants() {
             resetForm();
             setEdit(false);
             setEditPlantID(null);
-            alert("Plant Entry Updated!");
+            alert("Plants Entry Updated!");
         } else {
-            console.error('Failed to update plant entry');
+            console.error('Failed to update plants entry');
         }
     };
 
@@ -84,7 +84,7 @@ function Plants() {
         const response = await fetch(`${URL}/DeletePlant/${plantID}`, { method: 'DELETE' });
         if(response.ok){
             loadPlants();
-            alert("Plant Entry Removed!");
+            alert("Plants Entry Removed!");
         } else{
             console.error(`Failed to delete Plant with plantID = ${plantID}, status code = ${response.status}`);
         }
@@ -151,27 +151,26 @@ function Plants() {
                 <section >
                     <h3>{edit ?  "Edit Plant" : "Create New Entry"}</h3>
                     <article>
-                        <h5>{edit ?  "" : "What are you planting?"}</h5>
+
                         <form onSubmit={submitHandler}>
                             <fieldset>
-                                <legend>{edit ?  "Edit Entry" : "New Plant"}</legend>
-                                <h6>Select from existing plants or add a new plant!</h6>
                                 <p>
-                                    <label htmlFor="plantType">Existing Plants</label>
+                                    <label htmlFor="plantType">Select From Existing Plant Types</label>
                                     <PlantTypesDropDown selectedPlantType={plantType} setSelectedPlantType={setPlantType}></PlantTypesDropDown>
                                 </p>
                                 <div>
-                                    <label htmlFor="plantName">Enter New Plant</label>
+                                    <label htmlFor="plantName">Create New Plant Type</label>
                                     <input type="text" name="plantName" id="plantName" value={plantName} onChange={(e)=> setPlantName(e.target.value)}/>
                                 </div>
-                                <div>
-                                    <label>Season Complete</label>
-
-                                    <input type="radio" name="seasonComplete" id="seasonComplete" value="1" checked={seasonComplete === "1"} onChange={(e)=> setSeasonComplete("1")} />
+                                <div >
+                                    <label>Has the Plant Been Harvested?</label>
+                                    <div class="season">
                                     <label htmlFor="seasonComplete">Yes</label>
+                                    <input type="radio" name="seasonComplete" id="seasonComplete" value="1" checked={seasonComplete === "1"} onChange={(e)=> setSeasonComplete("1")} />
 
-                                    <input type="radio" name="seasonComplete" id="seasonNotComplete" value="0" checked={seasonComplete === "0"} onChange={(e)=> setSeasonComplete("0")} />
                                     <label htmlFor="seasonNotComplete">No</label>
+                                    <input type="radio" name="seasonComplete" id="seasonNotComplete" value="0" checked={seasonComplete === "0"} onChange={(e)=> setSeasonComplete("0")} />
+                                    </div>    
                                 </div>
                                 <p>
                                     <button className="btn btn-submit" type="submit">{edit ? "Update" : "Submit"}</button>

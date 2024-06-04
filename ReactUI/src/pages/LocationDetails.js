@@ -25,9 +25,9 @@ function LocationDetails() {
         if(response.ok) {
             loadLocationDetails();
             resetForm();
-            alert("New LocationDetails Added!");
+            alert("New Location Details Added!");
         }else{
-            console.error('Failed to create new LocationDetails entry');
+            console.error('Failed to create new Location Details entry');
         }
     }
 
@@ -47,7 +47,7 @@ function LocationDetails() {
                 setEdit(true);
                 setEditLocationDetailsID(locationDetailsID);
             } else {
-                console.error(`Failed to fetch LocationDetails with locationDetailsID = ${locationDetailsID}, status code = ${response.status}`);
+                console.error(`Failed to fetch Location Details with locationDetailsID = ${locationDetailsID}, status code = ${response.status}`);
             }
         }
     }
@@ -66,9 +66,9 @@ function LocationDetails() {
             resetForm();
             setEdit(false);
             setEditLocationDetailsID(null);
-            alert("LocationDetails Entry Updated!");
+            alert("Location Details Entry Updated!");
         } else {
-            console.error('Failed to update LocationDetails entry');
+            console.error('Failed to update Location Details entry');
         }
     }
 
@@ -78,9 +78,9 @@ function LocationDetails() {
         const response = await fetch(`${URL}/DeleteLocationDetails/${locationDetailsID}`, { method: 'DELETE' });
         if(response.ok){
             loadLocationDetails();
-            alert("LocationDetails entry removed!");
+            alert("Location Details entry removed!");
         } else{
-            console.error(`Failed to delete LocationDetails with locationDetailsID = ${locationDetailsID}, status code = ${response.status}`);
+            console.error(`Failed to delete Location Details with locationDetailsID = ${locationDetailsID}, status code = ${response.status}`);
         }
     }
 
@@ -111,11 +111,11 @@ function LocationDetails() {
         e.preventDefault();
 
         if(locationsID === null || (growthsID === null && productionsID === null)){
-            alert("A locationsID as well as either a growth or production ID required");
+            alert("A locationID as well as either a growth or production ID required");
             resetForm()
             return;
         }else if( !growthsID  && !productionsID ){
-            alert("A LocationDetails entry should have either a growth or a production ID")
+            alert("A Location Details entry should have either a growth or a production ID")
             resetForm()
             return;
         }
@@ -159,7 +159,6 @@ function LocationDetails() {
                 <article>
                     <form onSubmit={submitHandler}>
                         <fieldset>
-                            <legend>{edit ? "Edit Entry" : "New Location Details"}</legend>
                             {!edit &&(
                                 <p>
                                     <label htmlFor="LocationDetails">LocationID  </label>

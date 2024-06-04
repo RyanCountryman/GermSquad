@@ -31,11 +31,11 @@ function GrowingLocations() {
         });
 
         if(response.ok) {
-            alert("New GrowingLocation Added!");
+            alert("New Growing Location Added!");
             loadGrowingLocations();
             resetForm();
         }else{
-            console.error('Failed to create new growingLocation entry');
+            console.error('Failed to create new Growing Location entry');
         }
     };        
 
@@ -56,7 +56,7 @@ function GrowingLocations() {
                 setEdit(true);
                 setEditLocationID(locationID);
             } else {
-                console.error(`Failed to fetch GrowingLocation with locationID = ${locationID}, status code = ${response.status}`);
+                console.error(`Failed to fetch Growing Location with locationID = ${locationID}, status code = ${response.status}`);
             }
         }
     };
@@ -68,7 +68,7 @@ function GrowingLocations() {
         let isContainerLoc = (formLocationType === 'container')? 1 : 0;
 
         if((isGroundLoc === 0 && isContainerLoc === 0)){
-            alert("Please Select a location type and enter the respective type of growing location!");
+            alert("Please select a location type and then enter location details");
             resetForm();
             return;
         }
@@ -84,9 +84,9 @@ function GrowingLocations() {
             resetForm();
             setEdit(false);
             setEditLocationID(null);
-            alert("GrowingLocation Entry Updated!");
+            alert("Growing Location Entry Updated!");
         } else {
-            console.error('Failed to update growingLocation entry');
+            console.error('Failed to update Growing Location entry');
             resetForm();
             setEdit(false);
         }
@@ -98,10 +98,10 @@ function GrowingLocations() {
     const deleteGrowingLocation = async (locationID) =>{
         const response = await fetch(`${URL}/DeleteGrowingLocation/${locationID}`, { method: 'DELETE' });
         if(response.ok){
-            alert("GrowingLocation entry removed!");
+            alert("Growing Location entry removed!");
             loadGrowingLocations();
         } else{
-            console.error(`Failed to delete GrowingLocation with locationID = ${locationID}, status code = ${response.status}`);
+            console.error(`Failed to delete Growing Location with locationID = ${locationID}, status code = ${response.status}`);
         }
     };
 
@@ -143,7 +143,7 @@ function GrowingLocations() {
 
     //Fill Table Component
     const customClass = "plantTable"
-    const theadData = ["Location ID", "In Ground?", "In Container?", "Bed Type", "Container Type", "Modify"];
+    const theadData = ["Location ID", "Is Ground", "Is Container", "Bed Type", "Container Type", "Modify"];
     
     const tbodyData = growingLocations.map(growingLocation => {  
         return {
@@ -174,7 +174,6 @@ function GrowingLocations() {
                     <article>
                         <form onSubmit={submitHandler}>
                             <fieldset>
-                                <legend>{edit ?  "Edit Entry" : "New Growing Location"}</legend>
                                 <p>
                                     <label htmlFor="location">Location Type </label>
                                     <select name = "locationType" id="locationType" value={formLocationType} onChange={(e)=> setFormLocationType(e.target.value)}>

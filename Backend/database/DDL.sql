@@ -77,11 +77,11 @@ CREATE OR REPLACE TABLE Fertilizers(
 
 /* Intersection table to associate fertilizers to plant stages  */
 CREATE OR REPLACE TABLE FertilizerDetails(
-    fertilizerDetailsID int NOT NULL AUTO_INCREMENT,
+    detailsID int NOT NULL AUTO_INCREMENT,
     fertilizerID int NOT NULL,
     growthsID int,
     productionsID int,
-    PRIMARY KEY (fertilizerDetailsID),
+    PRIMARY KEY (detailsID),
     FOREIGN KEY (fertilizerID) REFERENCES Fertilizers(fertilizerID) ON DELETE CASCADE,
     FOREIGN KEY (growthsID) REFERENCES Growths(growthID) ON DELETE SET NULL,
     FOREIGN KEY (productionsID) REFERENCES Productions(productionID) ON DELETE SET NULL

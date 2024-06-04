@@ -24,7 +24,7 @@ function FertilizerDetails() {
         })
 
         if(response.ok) {
-            alert("New FertilizerDetails Added!");
+            alert("New Fertilizer Details Added!");
             loadFertilzerDetails();
             resetForm();
         }else{
@@ -67,9 +67,9 @@ function FertilizerDetails() {
             resetForm();
             setEdit(false);
             setEditFertilizerDetailsID(null);
-            alert("FertilizerDetails Entry Updated!");
+            alert("Fertilizer Details Entry Updated!");
         } else {
-            console.error('Failed to update FertilizerDetails entry');
+            console.error('Failed to update Fertilizer Details entry');
         }
     }
 
@@ -78,10 +78,10 @@ function FertilizerDetails() {
     const deleteFertilizerDetails = async (detailsID) =>{
         const response = await fetch(`${URL}/DeleteFertilizerDetails/${detailsID}`, { method: 'DELETE' });
         if(response.ok){
-            alert("FertilizerDetails entry removed!");
+            alert("Fertilizer Details entry removed!");
             loadFertilzerDetails();
         } else{
-            console.error(`Failed to delete FertilizerDetails with detailsID = ${detailsID}, status code = ${response.status}`);
+            console.error(`Failed to delete Fertilizer Details with detailsID = ${detailsID}, status code = ${response.status}`);
         }
     }
 
@@ -113,11 +113,11 @@ function FertilizerDetails() {
         e.preventDefault();
 
         if(fertilizerID === null || (growthsID === null && productionsID === null)){
-            alert("A fertilizerID as well as either a growth or production ID required")
+            alert("A Fertilizer Details entry should have either a growth or a production ID")
             resetForm()
             return;
         }else if( !growthsID  && !productionsID){
-            alert("A FertilizerDetails entry should have either a growth or a production ID")
+            alert("A Fertilizer Details entry should have either a growth or a production ID")
             resetForm()
             return;
         }
@@ -162,7 +162,6 @@ function FertilizerDetails() {
                 <article>
                     <form onSubmit={submitHandler}>
                         <fieldset>
-                            <legend>{edit ? "Edit Entry" : "New Fertilizer Details"}</legend>
                             {!edit &&(
                                 <p>
                                     <label htmlFor="FertilizerDetails">Fertilizer  </label>

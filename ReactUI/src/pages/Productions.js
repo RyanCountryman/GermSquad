@@ -76,9 +76,9 @@ function Productions() {
             resetForm();
             setEdit(false);
             setEditProductionID(null);
-            alert("Production Entry Updated!");
+            alert("Productions Entry Updated!");
         } else {
-            console.error('Failed to update production entry');
+            console.error('Failed to update productions entry');
         }
     }
 
@@ -87,7 +87,7 @@ function Productions() {
     const deleteProduction = async (productionID) =>{
         const response = await fetch(`${URL}/DeleteProduction/${productionID}`, { method: 'DELETE' });
         if(response.ok){
-            alert("Production entry removed!");
+            alert("Productions entry removed!");
             loadProductions();
         } else{
             console.error(`Failed to delete Production with productionID = ${productionID}, status code = ${response.status}`);
@@ -170,10 +170,9 @@ function Productions() {
                 <section >
                     <h3>{edit ? "Edit Production" : "Create New Entry"}</h3>
                     <article>
-                        <h5>{edit ? "" : "Which plant is this?"}</h5>
                         <form onSubmit={submitHandler}>
                             <fieldset>
-                                <legend>{edit ? "Edit Entry" : "New Production"}</legend>
+                                <legend>{edit ? "Edit Entry" : "Which plant is this?"}</legend>
                                 {!edit && (   
                                     <p>
                                         <label htmlFor="Production">Plant Type </label>
